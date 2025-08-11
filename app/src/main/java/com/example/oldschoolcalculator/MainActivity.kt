@@ -6,6 +6,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +23,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -28,10 +33,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -44,6 +55,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.oldschoolcalculator.ui.theme.OldSchoolCalculatorTheme
+import kotlinx.coroutines.flow.collect
 import java.nio.file.WatchEvent
 
 class MainActivity : ComponentActivity() {
@@ -98,6 +110,8 @@ fun DisplayRender(text: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun MainButtonLayout(modifier: Modifier = Modifier) {
+    val calculator = remember { Calculator()}
+
     Box(
         modifier = modifier
             .background(color = Color.DarkGray)
@@ -112,44 +126,56 @@ fun MainButtonLayout(modifier: Modifier = Modifier) {
                 modifier = modifier.background(color = MaterialTheme.colorScheme.primary)
             ) {
                 DisplayRender(
-                    "123456789",
+                    calculator.input,
                     modifier.padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 8.dp)
                 )
             }
             Row {
-                BigButton(text = "7")
-                BigButton(text = "8")
-                BigButton(text = "9")
-                BigButton(text = "X")
-                BigButton(text = "M+")
+                BigButton(text = "7", calculator)
+                BigButton(text = "8", calculator)
+                BigButton(text = "9", calculator)
+                BigButton(text = "X", calculator)
+                BigButton(text = "M+", calculator)
             }
             Row {
-                BigButton(text = "4")
-                BigButton(text = "5")
-                BigButton(text = "6")
-                BigButton(text = "/")
-                BigButton(text = "MR")
+                BigButton(text = "4", calculator)
+                BigButton(text = "5", calculator)
+                BigButton(text = "6", calculator)
+                BigButton(text = "/", calculator)
+                BigButton(text = "MR", calculator)
             }
             Row {
-                BigButton(text = "1")
-                BigButton(text = "2")
-                BigButton(text = "3")
-                BigButton(text = "+")
-                BigButton(text = "CE")
+                BigButton(text = "1", calculator)
+                BigButton(text = "2", calculator)
+                BigButton(text = "3", calculator)
+                BigButton(text = "+", calculator)
+                BigButton(text = "CE", calculator)
             }
             Row {
-                BigButton(text = "0")
-                BigButton(text = ".")
-                BigButton(text = "+/-")
-                BigButton(text = "-")
-                BigButton(text = "=")
+                BigButton(text = "0", calculator)
+                BigButton(text = ".", calculator)
+                BigButton(text = "+/-", calculator)
+                BigButton(text = "-", calculator)
+                BigButton(text = "=", calculator)
             }
         }
     }
 }
 
 @Composable
-fun BigButton(modifier: Modifier = Modifier, text: String) {
+fun BigButton(text: String, calculator: Calculator, modifier: Modifier = Modifier) {
+    val defaultButtonGradient = listOf(MaterialTheme.colorScheme.tertiary, Color.DarkGray)
+    var buttonGradient by remember {mutableStateOf(defaultButtonGradient) }
+    val interactionSource = remember { MutableInteractionSource() }
+    LaunchedEffect(interactionSource) {
+        interactionSource.interactions.collect { action ->
+            when(action){
+                is PressInteraction.Press -> buttonGradient = defaultButtonGradient.reversed()
+                is PressInteraction.Release -> {buttonGradient = defaultButtonGradient; calculator.buttonPress(text)}
+                is PressInteraction.Cancel -> buttonGradient = defaultButtonGradient
+            }
+        }
+    }
     ElevatedButton(
         modifier = modifier
             .height(56.dp)
@@ -164,14 +190,24 @@ fun BigButton(modifier: Modifier = Modifier, text: String) {
         ),
         shape = RoundedCornerShape(10),
         contentPadding = PaddingValues(0.dp),
-
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 8.dp,
+            pressedElevation = 0.dp,
+        ),
+        interactionSource = interactionSource
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = modifier
+                .fillMaxSize()
+                .background(brush = Brush.linearGradient(colors = buttonGradient)),
         ) {
-        Text(
-            text = text,
-            color = Color.White,
-            style = MaterialTheme.typography.displayLarge
-        )
-
+            Text(
+                text = text,
+                color = Color.White,
+                style = MaterialTheme.typography.displayLarge
+            )
+        }
     }
 }
 
@@ -180,7 +216,7 @@ fun BigButton(modifier: Modifier = Modifier, text: String) {
 @Composable
 fun BigButtonPreview() {
     OldSchoolCalculatorTheme(dynamicColor = false) {
-        BigButton(text = "5")
+        BigButton(text = "5", calculator = Calculator())
     }
 }
 
