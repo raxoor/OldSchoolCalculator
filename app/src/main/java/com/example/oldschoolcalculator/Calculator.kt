@@ -1,9 +1,7 @@
 package com.example.oldschoolcalculator
 
-import android.health.connect.datatypes.units.Length
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import java.math.BigDecimal
 import kotlin.math.absoluteValue
@@ -30,7 +28,7 @@ class Calculator {
         private const val DIGITNUM = 10
         private val MAXINT: Long by lazy {
             var x: Long = 9
-            for (i in 0 until DIGITNUM-1) {
+            repeat(DIGITNUM-1) {
                 x = x * 10 + 9
             }
             x
@@ -45,7 +43,9 @@ class Calculator {
     fun appendInput(symbol: Char) {
         if (this.input == ZERO || displayMode) {
             this.input = "" + symbol; displayMode = false
-        } else if (input.length < DIGITNUM) this.input += symbol
+        }else if(symbol == '.' && input.contains(symbol)) return
+        else if (input.length < DIGITNUM)
+            this.input += symbol
     }
 
     fun clearAll() {
@@ -55,14 +55,15 @@ class Calculator {
     }
     
     fun execute() {
+        val number: Double = input.toDoubleOrNull() ?: 0.0
         when (this.operation) {
-            Operation.ENTER -> accumulator = input.toDouble()
-            Operation.ADD -> accumulator += input.toDouble()
-            Operation.SUBTRACT -> accumulator -= input.toDouble()
-            Operation.MULTIPLY -> accumulator *= input.toDouble()
-            Operation.DIVIDE -> accumulator /= input.toDouble()
+            Operation.ENTER -> accumulator = number
+            Operation.ADD -> accumulator += number
+            Operation.SUBTRACT -> accumulator -= number
+            Operation.MULTIPLY -> accumulator *= number
+            Operation.DIVIDE -> accumulator /= number
             Operation.CLEAR -> {
-                clearAll(); return;
+                clearAll(); return
             }
         }
         this.displayMode = true
