@@ -68,16 +68,54 @@ class MainActivity : ComponentActivity() {
                 dynamicColor = false
             ) {
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.primary
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    color = MaterialTheme.colorScheme.tertiary
                 ) {
-                    MainButtonLayout()
+                    Layout()
                 }
             }
         }
     }
 }
 
+@Composable
+fun Layout(modifier: Modifier = Modifier) {
+    val calculator = remember { Calculator() }
+
+    Box(
+        modifier = modifier
+            .wrapContentSize()
+            .background(color = MaterialTheme.colorScheme.primary),
+        contentAlignment = Alignment.Center
+
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = modifier
+        ) {
+            CalculatorDisplay(modifier, calculator)
+            PrimaryKeypad(modifier, calculator)
+        }
+    }
+}
+
+@Composable
+private fun CalculatorDisplay(
+    modifier: Modifier,
+    calculator: Calculator
+) {
+    Box(
+        modifier = modifier
+            .background(color = MaterialTheme.colorScheme.primary)
+    ) {
+        DisplayRender(
+            calculator.input,
+            modifier.padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 8.dp)
+        )
+    }
+}
 
 @Composable
 fun DisplayRender(text: String, modifier: Modifier = Modifier) {
@@ -112,27 +150,16 @@ fun DisplayRender(text: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun MainButtonLayout(modifier: Modifier = Modifier) {
-    val calculator = remember { Calculator()}
-
+private fun PrimaryKeypad(
+    modifier: Modifier,
+    calculator: Calculator
+) {
     Box(
         modifier = modifier
-            .background(color = Color.DarkGray)
-
+            .padding(8.dp)
+            .background(color = Color.DarkGray),
     ) {
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = modifier
-        ) {
-            Box(
-                modifier = modifier.background(color = MaterialTheme.colorScheme.primary)
-            ) {
-                DisplayRender(
-                    calculator.input,
-                    modifier.padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 8.dp)
-                )
-            }
+        Column {
             Row {
                 BigButton(text = "7", calculator)
                 BigButton(text = "8", calculator)
@@ -168,13 +195,16 @@ fun MainButtonLayout(modifier: Modifier = Modifier) {
 @Composable
 fun BigButton(text: String, calculator: Calculator, modifier: Modifier = Modifier) {
     val defaultButtonGradient = listOf(MaterialTheme.colorScheme.tertiary, Color.DarkGray)
-    var buttonGradient by remember {mutableStateOf(defaultButtonGradient) }
+    var buttonGradient by remember { mutableStateOf(defaultButtonGradient) }
     val interactionSource = remember { MutableInteractionSource() }
     LaunchedEffect(interactionSource) {
         interactionSource.interactions.collect { action ->
-            when(action){
+            when (action) {
                 is PressInteraction.Press -> buttonGradient = defaultButtonGradient.reversed()
-                is PressInteraction.Release -> {buttonGradient = defaultButtonGradient; calculator.buttonPress(text)}
+                is PressInteraction.Release -> {
+                    buttonGradient = defaultButtonGradient; calculator.buttonPress(text)
+                }
+
                 is PressInteraction.Cancel -> buttonGradient = defaultButtonGradient
             }
         }
@@ -227,7 +257,7 @@ fun BigButtonPreview() {
 @Composable
 fun MainButtonPreview() {
     OldSchoolCalculatorTheme(dynamicColor = false) {
-        MainButtonLayout()
+        Layout()
     }
 }
 
