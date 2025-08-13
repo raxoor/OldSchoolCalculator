@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -95,6 +96,7 @@ fun DisplayRender(text: String, modifier: Modifier = Modifier) {
                 .background(color = Color.LightGray)
                 .wrapContentHeight()
                 .padding(top = 8.dp, bottom = 8.dp)
+                .height(40.dp)
         ) {
             Text(
                 text = text,
@@ -103,6 +105,7 @@ fun DisplayRender(text: String, modifier: Modifier = Modifier) {
                 fontFamily = FontFamily(Font(R.font.digital_display)),
                 fontSize = 60.sp,
                 color = Color.Black
+
             )
         }
     }
@@ -135,21 +138,21 @@ fun MainButtonLayout(modifier: Modifier = Modifier) {
                 BigButton(text = "8", calculator)
                 BigButton(text = "9", calculator)
                 BigButton(text = "X", calculator)
-                BigButton(text = "M+", calculator)
+                BigButton(text = "◄", calculator)
             }
             Row {
                 BigButton(text = "4", calculator)
                 BigButton(text = "5", calculator)
                 BigButton(text = "6", calculator)
                 BigButton(text = "/", calculator)
-                BigButton(text = "MR", calculator)
+                BigButton(text = "CE", calculator)
             }
             Row {
                 BigButton(text = "1", calculator)
                 BigButton(text = "2", calculator)
                 BigButton(text = "3", calculator)
                 BigButton(text = "+", calculator)
-                BigButton(text = "CE", calculator)
+                BigButton(text = "C", calculator)
             }
             Row {
                 BigButton(text = "0", calculator)
