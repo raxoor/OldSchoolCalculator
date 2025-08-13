@@ -15,7 +15,7 @@ class Calculator {
 
     companion object {
         private const val ZERO = "0"
-        private const val DIGITNUM = 10
+        private const val DIGITNUM = 11
         private val MAXINT: Long by lazy {
             var x: Long = 9
             repeat(DIGITNUM - 1) {

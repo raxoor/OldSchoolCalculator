@@ -45,6 +45,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -86,6 +87,7 @@ fun Layout(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .wrapContentSize()
+            .clip(shape = RoundedCornerShape(12.dp))
             .background(color = MaterialTheme.colorScheme.primary),
         contentAlignment = Alignment.Center
 
@@ -95,8 +97,14 @@ fun Layout(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier
         ) {
-            CalculatorDisplay(modifier, calculator)
-            PrimaryKeypad(modifier, calculator)
+            CalculatorDisplay(
+                modifier = modifier.clip(shape = RoundedCornerShape(5.dp)),
+                calculator = calculator
+            )
+            PrimaryKeypad(
+                modifier = modifier.clip(shape = RoundedCornerShape(30.dp)),
+                calculator = calculator
+            )
         }
     }
 }
@@ -108,43 +116,38 @@ private fun CalculatorDisplay(
 ) {
     Box(
         modifier = modifier
+            .width(400.dp)
             .background(color = MaterialTheme.colorScheme.primary)
-    ) {
-        DisplayRender(
-            calculator.input,
-            modifier.padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 8.dp)
-        )
-    }
-}
+            .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 8.dp)
 
-@Composable
-fun DisplayRender(text: String, modifier: Modifier = Modifier) {
-    Box(
-        contentAlignment = Alignment.CenterEnd,
-        modifier = modifier
-            .fillMaxWidth()
-            .background(color = Color.White)
-            .wrapContentHeight()
-            .padding(top = 4.dp, bottom = 4.dp)
     ) {
         Box(
             contentAlignment = Alignment.CenterEnd,
             modifier = modifier
-                .fillMaxWidth()
-                .background(color = Color.LightGray)
+                .background(color = Color.White)
                 .wrapContentHeight()
-                .padding(top = 8.dp, bottom = 8.dp)
-                .height(40.dp)
-        ) {
-            Text(
-                text = text,
-                textAlign = TextAlign.Left,
-                maxLines = 1,
-                fontFamily = FontFamily(Font(R.font.digital_display)),
-                fontSize = 60.sp,
-                color = Color.Black
+                .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)
 
-            )
+        ) {
+            Box(
+                contentAlignment = Alignment.CenterEnd,
+                modifier = modifier
+                    .fillMaxWidth()
+                    .background(color = Color.LightGray)
+                    .wrapContentHeight()
+                    .padding(top = 8.dp, bottom = 8.dp)
+                    .height(40.dp)
+            ) {
+                Text(
+                    text = calculator.input,
+                    textAlign = TextAlign.Left,
+                    maxLines = 1,
+                    fontFamily = FontFamily(Font(R.font.digital_display)),
+                    fontSize = 60.sp,
+                    color = Color.Black
+
+                )
+            }
         }
     }
 }
@@ -157,7 +160,7 @@ private fun PrimaryKeypad(
     Box(
         modifier = modifier
             .padding(8.dp)
-            .background(color = Color.DarkGray),
+            .background(color = Color.DarkGray)
     ) {
         Column {
             Row {
@@ -201,10 +204,7 @@ fun BigButton(text: String, calculator: Calculator, modifier: Modifier = Modifie
         interactionSource.interactions.collect { action ->
             when (action) {
                 is PressInteraction.Press -> buttonGradient = defaultButtonGradient.reversed()
-                is PressInteraction.Release -> {
-                    buttonGradient = defaultButtonGradient; calculator.buttonPress(text)
-                }
-
+                is PressInteraction.Release -> buttonGradient = defaultButtonGradient
                 is PressInteraction.Cancel -> buttonGradient = defaultButtonGradient
             }
         }
@@ -214,12 +214,12 @@ fun BigButton(text: String, calculator: Calculator, modifier: Modifier = Modifie
             .height(56.dp)
             .width(76.dp)
             .padding(top = 6.dp, bottom = 6.dp, start = 4.dp, end = 4.dp),
-        onClick = {/*TODO*/ },
+        onClick = {calculator.buttonPress(text)},
         colors = ButtonColors(
             containerColor = MaterialTheme.colorScheme.tertiary,
             contentColor = Color.White,
-            disabledContainerColor = Color.White, //TODO: lol
-            disabledContentColor = Color.White, //TODO: lol
+            disabledContainerColor = Color.White, //Not used
+            disabledContentColor = Color.White, //Not used
         ),
         shape = RoundedCornerShape(10),
         contentPadding = PaddingValues(0.dp),
@@ -258,13 +258,5 @@ fun BigButtonPreview() {
 fun MainButtonPreview() {
     OldSchoolCalculatorTheme(dynamicColor = false) {
         Layout()
-    }
-}
-
-@Preview
-@Composable
-fun DisplayRendererPreview() {
-    OldSchoolCalculatorTheme(dynamicColor = false) {
-        DisplayRender("123456789")
     }
 }
