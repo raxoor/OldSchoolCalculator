@@ -2,6 +2,7 @@ package com.example.oldschoolcalculator
 
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ToggleButton
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -27,6 +28,9 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Shapes
@@ -46,6 +50,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -97,12 +102,23 @@ fun Layout(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier
         ) {
+            DrawerButton(
+                modifier = modifier
+                    .fillMaxWidth(),
+                calculator = calculator
+            )
             CalculatorDisplay(
                 modifier = modifier.clip(shape = RoundedCornerShape(5.dp)),
                 calculator = calculator
             )
             PrimaryKeypad(
-                modifier = modifier.clip(shape = RoundedCornerShape(30.dp)),
+                modifier = modifier.clip(shape = RoundedCornerShape(14.dp)),
+                calculator = calculator
+            )
+            DrawerButton(
+                isUp = false,
+                modifier = modifier
+                    .fillMaxWidth(),
                 calculator = calculator
             )
         }
@@ -159,7 +175,7 @@ private fun PrimaryKeypad(
 ) {
     Box(
         modifier = modifier
-            .padding(8.dp)
+            .padding(start = 8.dp, end = 8.dp)
             .background(color = Color.DarkGray)
     ) {
         Column {
@@ -244,6 +260,33 @@ fun BigButton(text: String, calculator: Calculator, modifier: Modifier = Modifie
     }
 }
 
+@Composable
+fun DrawerButton(modifier: Modifier = Modifier, isUp: Boolean = true, calculator: Calculator){
+    val upIcon = painterResource(R.drawable.up)
+    val downIcon = painterResource(R.drawable.down)
+    var currentlyDisplayed = if(isUp) upIcon else downIcon
+    var state by remember { mutableStateOf(currentlyDisplayed) }
+    IconButton(
+        modifier = modifier,
+        onClick = {
+            state = if(state == upIcon) downIcon else upIcon
+        },
+        colors = IconButtonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = Color.White,
+            disabledContentColor = Color.White, //Unreachable
+            disabledContainerColor = Color.White //Unreachable
+        )
+        ){
+        Icon(
+            modifier = modifier.fillMaxSize(),
+            painter = state,
+            contentDescription = null
+        )
+    }
+}
+
+
 
 @Preview(showBackground = false)
 @Composable
@@ -258,5 +301,15 @@ fun BigButtonPreview() {
 fun MainButtonPreview() {
     OldSchoolCalculatorTheme(dynamicColor = false) {
         Layout()
+    }
+}
+
+@Preview
+@Composable
+fun DrawerButtonPreview(){
+    OldSchoolCalculatorTheme(
+        dynamicColor = false
+    ) {
+        DrawerButton(calculator = Calculator())
     }
 }
