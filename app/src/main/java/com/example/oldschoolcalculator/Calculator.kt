@@ -33,7 +33,7 @@ class Calculator {
     }
 
     fun appendInput(symbol: Char) {
-        if (this.input == ZERO || displayMode) {
+        if (this.input == ZERO || displayMode || this.input == "-0") {
             this.input = "" + symbol; displayMode = false
         } else if (symbol == '.' && input.contains(symbol)) return
         else if (input.length < DIGITNUM)
