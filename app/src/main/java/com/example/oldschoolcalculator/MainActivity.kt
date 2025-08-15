@@ -1,9 +1,17 @@
 package com.example.oldschoolcalculator
 
 import android.os.Bundle
+import android.text.Layout
+import android.widget.GridLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOut
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
@@ -27,8 +35,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -40,9 +50,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.fontResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -90,8 +104,8 @@ fun Layout(modifier: Modifier = Modifier) {
                 modifier = modifier
                     .fillMaxWidth(),
                 calculator = calculator
-            ){ //This block is a placeholder for testing visuals
-                Keypad(
+            ) { //This block is a placeholder for testing visuals
+                TopDrawer(
                     modifier = modifier.clip(shape = RoundedCornerShape(14.dp)),
                     calculator = calculator
                 )
@@ -175,11 +189,31 @@ private fun Keypad(
             .background(color = Color.DarkGray)
     ) {
         Column {
-            for(row in ButtonLayout.main) {
+            for (row in ButtonLayout.main) {
                 Row {
                     for (col in row)
-                    BigButton(text = col, calculator = calculator)
+                        BigButton(text = col, calculator = calculator)
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun TopDrawer(
+    modifier: Modifier = Modifier,
+    calculator: Calculator
+){
+    Box(
+        modifier = modifier
+            .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
+            .background(color = Color.DarkGray)
+    ) {
+        Column {
+            Row {
+                ColorRadioButton(text = "DEG", calculator = calculator, selected = false)
+                ColorRadioButton(text = "RAD", calculator = calculator, selected = false)
+                ColorRadioButton(text = "GRA", calculator = calculator, selected = true)
             }
         }
     }
@@ -204,7 +238,7 @@ fun BigButton(text: String, calculator: Calculator, modifier: Modifier = Modifie
             .height(56.dp)
             .width(76.dp)
             .padding(top = 6.dp, bottom = 6.dp, start = 4.dp, end = 4.dp),
-        onClick = {calculator.buttonPress(text)},
+        onClick = { calculator.buttonPress(text) },
         colors = ButtonColors(
             containerColor = MaterialTheme.colorScheme.tertiary,
             contentColor = Color.White,
@@ -239,14 +273,20 @@ fun DrawerButton(
     modifier: Modifier = Modifier,
     isUp: Boolean = true,
     calculator: Calculator,
-    content:@Composable (() -> Unit) = {},
-    ){
+    content: @Composable (() -> Unit) = {},
+) {
     var isOpen by remember { mutableStateOf(false) }
     val upIcon = painterResource(R.drawable.up)
     val downIcon = painterResource(R.drawable.down)
     var state by remember { mutableStateOf(isUp) }
-    if(isOpen && !isUp){
-        content()
+    if (!isUp) {
+        AnimatedVisibility(
+            visible = isOpen,
+            enter = slideInVertically() { height -> -height } + expandVertically(expandFrom = Alignment.Top),
+            exit = slideOutVertically() { height -> -height } + shrinkVertically(shrinkTowards = Alignment.Top)
+        ) {
+            content()
+        }
     }
     IconButton(
         modifier = modifier,
@@ -260,19 +300,79 @@ fun DrawerButton(
             disabledContentColor = Color.White, //Unreachable
             disabledContainerColor = Color.White //Unreachable
         )
-        ){
+    ) {
         Icon(
             modifier = modifier.fillMaxSize(),
-            painter = if(state) upIcon else downIcon,
+            painter = if (state) upIcon else downIcon,
             contentDescription = null
         )
     }
-    if(isOpen && isUp){
-        content()
+
+    if (isUp) {
+        AnimatedVisibility(
+            visible = isOpen,
+            enter = slideInVertically() { height -> height } + expandVertically(),
+            exit = slideOutVertically() { height -> height } + shrinkVertically()
+
+        ) {
+            content()
+        }
     }
 }
 
-
+@Composable
+fun ColorRadioButton(
+    modifier: Modifier = Modifier,
+    selected: Boolean,
+    text: String,
+    calculator: Calculator
+) {
+    Box(
+        modifier = modifier
+            .height(60.dp)
+            .width(120.dp)
+            .padding(top = 6.dp, bottom = 6.dp, start = 4.dp, end = 4.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        ElevatedButton(
+            modifier = modifier.fillMaxSize(),
+            onClick = {},
+            colors = ButtonColors(
+                contentColor = Color.Black,
+                containerColor = Color.LightGray,
+                disabledContentColor = Color.Transparent, // Not Used
+                disabledContainerColor = Color.Transparent
+            ),
+            elevation = ButtonDefaults.buttonElevation(
+                defaultElevation = 8.dp,
+                pressedElevation = 0.dp,
+            )
+        ) {
+        }
+        if(selected) {
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .graphicsLayer(scaleX = 3.2f, scaleY = 1.5f)
+                    .background(
+                        brush = Brush.radialGradient(
+                            colors = listOf(Color.Green, Color.Transparent),
+                        )
+                    ),
+            )
+        }
+        Text(
+            modifier = modifier
+                .fillMaxSize()
+                .background(color = Color.Transparent),
+            text = text,
+            style = MaterialTheme.typography.displayLarge,
+            color = Color.Black,
+            textAlign = TextAlign.Center,
+            maxLines = 1
+        )
+    }
+}
 
 @Preview(showBackground = false)
 @Composable
@@ -282,20 +382,19 @@ fun BigButtonPreview() {
     }
 }
 
+@Preview(showBackground = false)
+@Composable
+fun ColorRadioButtonPreview() {
+    OldSchoolCalculatorTheme(dynamicColor = false) {
+        ColorRadioButton(selected = false, calculator = Calculator(), text = "DEG")
+    }
+}
+
+
 @Preview
 @Composable
 fun MainButtonPreview() {
     OldSchoolCalculatorTheme(dynamicColor = false) {
         Layout()
-    }
-}
-
-@Preview
-@Composable
-fun DrawerButtonPreview(){
-    OldSchoolCalculatorTheme(
-        dynamicColor = false
-    ) {
-        DrawerButton(calculator = Calculator())
     }
 }
