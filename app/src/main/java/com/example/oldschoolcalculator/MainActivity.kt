@@ -103,7 +103,6 @@ fun Layout(modifier: Modifier = Modifier) {
             DrawerButton(
                 modifier = modifier
                     .fillMaxWidth(),
-                calculator = calculator
             ) { //This block is a placeholder for testing visuals
                 TopDrawer(
                     modifier = modifier.clip(shape = RoundedCornerShape(14.dp)),
@@ -122,7 +121,6 @@ fun Layout(modifier: Modifier = Modifier) {
                 isUp = false,
                 modifier = modifier
                     .fillMaxWidth(),
-                calculator = calculator
             )
             {
                 //This block is a placeholder for testing visuals
@@ -204,6 +202,7 @@ fun TopDrawer(
     modifier: Modifier = Modifier,
     calculator: Calculator
 ){
+    var selectedButton by remember { mutableStateOf("DEG") }
     Box(
         modifier = modifier
             .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
@@ -211,9 +210,17 @@ fun TopDrawer(
     ) {
         Column {
             Row {
-                ColorRadioButton(text = "DEG", calculator = calculator, selected = false)
-                ColorRadioButton(text = "RAD", calculator = calculator, selected = false)
-                ColorRadioButton(text = "GRA", calculator = calculator, selected = true)
+                ColorRadioButton(
+                    text = "DEG",
+                    calculator = calculator,
+                    selected = selectedButton == "DEG"){selectedButton="DEG"}
+                ColorRadioButton(
+                    text = "RAD",
+                    calculator = calculator,
+                    selected = selectedButton == "RAD"){selectedButton="RAD"}
+                ColorRadioButton(text = "GRA",
+                    calculator = calculator,
+                    selected = selectedButton =="GRA"){selectedButton="GRA"}
             }
         }
     }
@@ -272,7 +279,6 @@ fun BigButton(text: String, calculator: Calculator, modifier: Modifier = Modifie
 fun DrawerButton(
     modifier: Modifier = Modifier,
     isUp: Boolean = true,
-    calculator: Calculator,
     content: @Composable (() -> Unit) = {},
 ) {
     var isOpen by remember { mutableStateOf(false) }
@@ -325,7 +331,8 @@ fun ColorRadioButton(
     modifier: Modifier = Modifier,
     selected: Boolean,
     text: String,
-    calculator: Calculator
+    calculator: Calculator,
+    onClick: () -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -336,7 +343,7 @@ fun ColorRadioButton(
     ) {
         ElevatedButton(
             modifier = modifier.fillMaxSize(),
-            onClick = {},
+            onClick = {calculator.buttonPress(text = text); onClick()},
             colors = ButtonColors(
                 contentColor = Color.Black,
                 containerColor = Color.LightGray,
@@ -386,7 +393,7 @@ fun BigButtonPreview() {
 @Composable
 fun ColorRadioButtonPreview() {
     OldSchoolCalculatorTheme(dynamicColor = false) {
-        ColorRadioButton(selected = false, calculator = Calculator(), text = "DEG")
+        ColorRadioButton(selected = false, calculator = Calculator(), text = "DEG"){}
     }
 }
 
