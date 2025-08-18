@@ -169,8 +169,15 @@ private fun Keypad(
     Box(
         modifier = modifier
             .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
-            .background(brush = Brush.linearGradient(colors = listOf(Color.DarkGray, Color.LightGray), start = Offset.Zero, end = Offset(0.5f, 0.2f), tileMode = TileMode.Mirror))
-            //.background(color = Color.DarkGray)
+            .background(
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        Color.DarkGray,
+                        Color.LightGray
+                    ), start = Offset.Zero, end = Offset(0.5f, 0.2f), tileMode = TileMode.Mirror
+                )
+            )
+        //.background(color = Color.DarkGray)
     ) {
         Column {
             for (row in ButtonLayout.main) {
@@ -187,36 +194,78 @@ private fun Keypad(
 fun TopDrawer(
     modifier: Modifier = Modifier,
     calculator: Calculator
-){
+) {
     var selectedButton by remember { mutableStateOf("DEG") }
+    var isShiftActive by remember { mutableStateOf(false) }
     Box(
         modifier = modifier
             .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
             .background(color = Color.DarkGray)
     ) {
-        Column {
-            Row {
+        Column(modifier = modifier.padding(8.dp)) {
+            Row(
+                modifier = modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
                 GreenLightButton(
                     text = "DEG",
                     calculator = calculator,
-                    selected = selectedButton == "DEG"){selectedButton="DEG"}
+                    selected = selectedButton == "DEG"
+                ) { selectedButton = "DEG" }
                 GreenLightButton(
                     text = "RAD",
                     calculator = calculator,
-                    selected = selectedButton == "RAD"){selectedButton="RAD"}
-                GreenLightButton(text = "GRA",
+                    selected = selectedButton == "RAD"
+                ) { selectedButton = "RAD" }
+                GreenLightButton(
+                    text = "GRA",
                     calculator = calculator,
-                    selected = selectedButton =="GRA"){selectedButton="GRA"}
+                    selected = selectedButton == "GRA"
+                ) { selectedButton = "GRA" }
+            }
+            Row(
+                modifier = modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(space = 12.dp, alignment = Alignment.CenterHorizontally)
+            ) {
+                ShiftButton(text = "Shift") { isShiftActive = !isShiftActive }
+                ShiftableButton(
+                    text = "sin",
+                    modifier = modifier,
+                    calculator = calculator,
+                    isActive = isShiftActive
+                )
+                ShiftableButton(
+                    text = "cos",
+                    modifier = modifier,
+                    calculator = calculator,
+                    isActive = isShiftActive
+                )
+                ShiftableButton(
+                    text = "tan",
+                    modifier = modifier,
+                    calculator = calculator,
+                    isActive = isShiftActive
+                )
             }
         }
     }
 }
 
 
+//@Preview
+//@Composable
+//fun MainButtonPreview() {
+//    OldSchoolCalculatorTheme(dynamicColor = false) {
+//        Layout()
+//    }
+//}
+
 @Preview
 @Composable
-fun MainButtonPreview() {
+fun TopDrawerPreview() {
     OldSchoolCalculatorTheme(dynamicColor = false) {
-        Layout()
+        TopDrawer(calculator = Calculator())
     }
 }
+
+
