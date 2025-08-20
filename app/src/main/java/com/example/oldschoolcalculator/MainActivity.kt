@@ -229,22 +229,91 @@ fun TopDrawer(
             ) {
                 ShiftButton(text = "Shift") { isShiftActive = !isShiftActive }
                 ShiftableButton(
-                    text = "sin",
                     modifier = modifier,
                     calculator = calculator,
-                    isActive = isShiftActive
+                    isActive = isShiftActive,
+                    buttonText = {Superscript(text = "sin")},
+                    shiftDescriptor = {Superscript(text = "sin", superscript = "-1", isOnButton = false)}
                 )
                 ShiftableButton(
-                    text = "cos",
                     modifier = modifier,
                     calculator = calculator,
-                    isActive = isShiftActive
+                    isActive = isShiftActive,
+                    buttonText = {Superscript(text = "cos")},
+                    shiftDescriptor = {Superscript(text = "cos", superscript = "-1", isOnButton = false)}
                 )
                 ShiftableButton(
-                    text = "tan",
                     modifier = modifier,
                     calculator = calculator,
-                    isActive = isShiftActive
+                    isActive = isShiftActive,
+                    buttonText = {Superscript(text = "tan")},
+                    shiftDescriptor = {Superscript(text = "tan", superscript = "-1", isOnButton = false)}
+                )
+            }
+            Row(
+                modifier = modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(space = 12.dp, alignment = Alignment.CenterHorizontally)
+            ) {
+                ShiftableButton(
+                    modifier = modifier,
+                    calculator = calculator,
+                    isActive = isShiftActive,
+                    buttonText = {Superscript(text = "x", superscript = "2")},
+                    shiftDescriptor = {Superscript(text = "x", superscript = "y", isOnButton = false)}
+                )
+                ShiftableButton(
+                    modifier = modifier,
+                    calculator = calculator,
+                    isActive = isShiftActive,
+                    buttonText = {Superscript(text = "√x")},
+                    shiftDescriptor = {Superscript(text = "√x", superscript = "y", isOnButton = false, isBefore = true)}
+                )
+                ShiftableButton(
+                    modifier = modifier,
+                    calculator = calculator,
+                    isActive = isShiftActive,
+                    buttonText = {Superscript(text = "Log")},
+                    shiftDescriptor = {Superscript(text = "10", superscript = "x", isOnButton = false)}
+                )
+                ShiftableButton(
+                    modifier = modifier,
+                    calculator = calculator,
+                    isActive = isShiftActive,
+                    buttonText = {Superscript(text = "→°' \"")},
+                    shiftDescriptor = {Superscript(text = "°' \"→", isOnButton = false)}
+                )
+            }
+            Row(
+                modifier = modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(space = 12.dp, alignment = Alignment.CenterHorizontally)
+            ) {
+                ShiftableButton(
+                    modifier = modifier,
+                    calculator = calculator,
+                    isActive = isShiftActive,
+                    buttonText = {Superscript(text = "1/x")},
+                    shiftDescriptor = {Superscript(text = "x!", isOnButton = false)}
+                )
+                ShiftableButton(
+                    modifier = modifier,
+                    calculator = calculator,
+                    isActive = isShiftActive,
+                    buttonText = {Superscript(text = "π")},
+                    shiftDescriptor = {Superscript(text = "e", isOnButton = false)}
+                )
+                ShiftableButton(
+                    modifier = modifier,
+                    calculator = calculator,
+                    isActive = isShiftActive,
+                    buttonText = {Superscript(text = "%")},
+                    shiftDescriptor = {Superscript(text = "MOD", isOnButton = false)}
+                )
+                ShiftableButton(
+                    modifier = modifier,
+                    calculator = calculator,
+                    isActive = isShiftActive,
+                    buttonText = {Superscript(text = "ln")},
+                    shiftDescriptor = {Superscript(text = "RNG", isOnButton = false)}
                 )
             }
         }

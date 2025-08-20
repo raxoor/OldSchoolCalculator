@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -215,12 +214,64 @@ fun NumpadButton(text: String, calculator: Calculator, modifier: Modifier = Modi
     }
 }
 
+/**Used only for shiftable buttons. Use the before flag to toggle
+ * superscripts position, isOnButton will but the text on the button or descriptor*/
+@Composable
+fun Superscript(
+    modifier: Modifier = Modifier,
+    text: String,
+    superscript: String = "",
+    isBefore: Boolean = false,
+    isOnButton: Boolean = true
+) {
+
+    val fontSize = if(isOnButton) 26.sp else 14.sp
+    val fontDescaler = if(isOnButton)  10 else 4
+    val writingColor = if (isOnButton) Color.Black else Colors.DarkYellow
+    val upper: @Composable () -> Unit =
+        {
+            Text(
+                text = superscript,
+                style = MaterialTheme.typography.displayLarge,
+                fontSize = (fontSize.value - fontDescaler).sp,
+                color = writingColor
+            )
+        }
+
+    val main: @Composable () -> Unit =
+        {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.displayLarge,
+                fontSize = fontSize,
+                color = writingColor
+            )
+        }
+    Row(
+        horizontalArrangement = Arrangement.End
+    ) {
+        if(!isOnButton) {
+            Spacer(
+                modifier = modifier.weight(0.1f)
+            )
+        }
+        if (isBefore) {
+            upper()
+            main()
+        } else {
+            main()
+            upper()
+        }
+    }
+}
+
 @Composable
 fun ShiftableButton(
     modifier: Modifier = Modifier,
-    text: String,
     calculator: Calculator,
-    isActive: Boolean
+    isActive: Boolean,
+    buttonText: @Composable () -> Unit,
+    shiftDescriptor: @Composable () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -228,32 +279,13 @@ fun ShiftableButton(
             .width(76.dp)
             .padding(bottom = 6.dp, start = 4.dp, end = 4.dp),
     ) {
-        Row(
-            horizontalArrangement = Arrangement.End
-        ) {
-            val writingColor = Colors.DarkYellow
-            Spacer(
-                modifier = modifier.weight(0.1f)
-            )
-            Text(
-                text = text,
-                style = MaterialTheme.typography.displayLarge,
-                fontSize = 14.sp,
-                color = writingColor
-            )
-            Text(
-                text = "-1",
-                style = MaterialTheme.typography.displayLarge,
-                fontSize = 10.sp,
-                color = writingColor
-            )
-        }
+        shiftDescriptor()
         Box(
             contentAlignment = Alignment.Center
         ) {
             ElevatedButton(
                 modifier = modifier.fillMaxWidth(),
-                onClick = { calculator.buttonPress(if (isActive) "$text-1" else text) },
+                onClick = { },
                 colors = ButtonColors(
                     containerColor = Color.LightGray,
                     contentColor = Color.Transparent,
@@ -289,12 +321,7 @@ fun ShiftableButton(
                 )
 
             }
-            Text(
-                text = text,
-                style = MaterialTheme.typography.displayLarge,
-                fontSize = 26.sp,
-                color = Color.Black
-            )
+            buttonText()
         }
 
     }
@@ -361,7 +388,11 @@ fun ColorRadioButtonPreview() {
 @Composable
 fun ShiftableButtonPreview() {
     OldSchoolCalculatorTheme(dynamicColor = false) {
-        ShiftableButton(calculator = Calculator(), text = "cos", isActive = true)
+        ShiftableButton(
+            calculator = Calculator(),
+            isActive = true,
+            buttonText = { Superscript(text = "sin", superscript = "-1") },
+        ) { Superscript(text = "sin", superscript = "-1", isOnButton = false) }
     }
 }
 
