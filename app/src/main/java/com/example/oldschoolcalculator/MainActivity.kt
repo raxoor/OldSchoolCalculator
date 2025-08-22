@@ -80,7 +80,7 @@ fun Layout(modifier: Modifier = Modifier) {
             DrawerButton(
                 modifier = modifier
                     .fillMaxWidth(),
-            ) { //This block is a placeholder for testing visuals
+            ) {
                 TopDrawer(
                     modifier = modifier.clip(shape = RoundedCornerShape(14.dp)),
                     calculator = calculator
@@ -100,9 +100,9 @@ fun Layout(modifier: Modifier = Modifier) {
                     .fillMaxWidth(),
             )
             {
-                //This block is a placeholder for testing visuals
-                Keypad(
-                    modifier = modifier.clip(shape = RoundedCornerShape(14.dp)),
+
+                BottomDrawer(
+                    //modifier = modifier.clip(shape = RoundedCornerShape(14.dp)),
                     calculator = calculator
                 )
             }
@@ -190,151 +190,17 @@ private fun Keypad(
     }
 }
 
-@Composable
-fun TopDrawer(
-    modifier: Modifier = Modifier,
-    calculator: Calculator
-) {
-    var selectedButton by remember { mutableStateOf("DEG") }
-    var isShiftActive by remember { mutableStateOf(false) }
-    Box(
-        modifier = modifier
-            .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
-            .background(color = Color.DarkGray)
-    ) {
-        Column(modifier = modifier.padding(8.dp)) {
-            Row(
-                modifier = modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                GreenLightButton(
-                    text = "DEG",
-                    calculator = calculator,
-                    selected = selectedButton == "DEG"
-                ) { selectedButton = "DEG" }
-                GreenLightButton(
-                    text = "RAD",
-                    calculator = calculator,
-                    selected = selectedButton == "RAD"
-                ) { selectedButton = "RAD" }
-                GreenLightButton(
-                    text = "GRA",
-                    calculator = calculator,
-                    selected = selectedButton == "GRA"
-                ) { selectedButton = "GRA" }
-            }
-            Row(
-                modifier = modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(space = 12.dp, alignment = Alignment.CenterHorizontally)
-            ) {
-                ShiftButton(text = "Shift") { isShiftActive = !isShiftActive }
-                ShiftableButton(
-                    modifier = modifier,
-                    calculator = calculator,
-                    isActive = isShiftActive,
-                    buttonText = {Superscript(text = "sin")},
-                    shiftDescriptor = {Superscript(text = "sin", superscript = "-1", isOnButton = false)}
-                )
-                ShiftableButton(
-                    modifier = modifier,
-                    calculator = calculator,
-                    isActive = isShiftActive,
-                    buttonText = {Superscript(text = "cos")},
-                    shiftDescriptor = {Superscript(text = "cos", superscript = "-1", isOnButton = false)}
-                )
-                ShiftableButton(
-                    modifier = modifier,
-                    calculator = calculator,
-                    isActive = isShiftActive,
-                    buttonText = {Superscript(text = "tan")},
-                    shiftDescriptor = {Superscript(text = "tan", superscript = "-1", isOnButton = false)}
-                )
-            }
-            Row(
-                modifier = modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(space = 12.dp, alignment = Alignment.CenterHorizontally)
-            ) {
-                ShiftableButton(
-                    modifier = modifier,
-                    calculator = calculator,
-                    isActive = isShiftActive,
-                    buttonText = {Superscript(text = "x", superscript = "2")},
-                    shiftDescriptor = {Superscript(text = "x", superscript = "y", isOnButton = false)}
-                )
-                ShiftableButton(
-                    modifier = modifier,
-                    calculator = calculator,
-                    isActive = isShiftActive,
-                    buttonText = {Superscript(text = "√x")},
-                    shiftDescriptor = {Superscript(text = "√x", superscript = "y", isOnButton = false, isBefore = true)}
-                )
-                ShiftableButton(
-                    modifier = modifier,
-                    calculator = calculator,
-                    isActive = isShiftActive,
-                    buttonText = {Superscript(text = "Log")},
-                    shiftDescriptor = {Superscript(text = "10", superscript = "x", isOnButton = false)}
-                )
-                ShiftableButton(
-                    modifier = modifier,
-                    calculator = calculator,
-                    isActive = isShiftActive,
-                    buttonText = {Superscript(text = "→°' \"")},
-                    shiftDescriptor = {Superscript(text = "°' \"→", isOnButton = false)}
-                )
-            }
-            Row(
-                modifier = modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(space = 12.dp, alignment = Alignment.CenterHorizontally)
-            ) {
-                ShiftableButton(
-                    modifier = modifier,
-                    calculator = calculator,
-                    isActive = isShiftActive,
-                    buttonText = {Superscript(text = "1/x")},
-                    shiftDescriptor = {Superscript(text = "x!", isOnButton = false)}
-                )
-                ShiftableButton(
-                    modifier = modifier,
-                    calculator = calculator,
-                    isActive = isShiftActive,
-                    buttonText = {Superscript(text = "π")},
-                    shiftDescriptor = {Superscript(text = "e", isOnButton = false)}
-                )
-                ShiftableButton(
-                    modifier = modifier,
-                    calculator = calculator,
-                    isActive = isShiftActive,
-                    buttonText = {Superscript(text = "%")},
-                    shiftDescriptor = {Superscript(text = "MOD", isOnButton = false)}
-                )
-                ShiftableButton(
-                    modifier = modifier,
-                    calculator = calculator,
-                    isActive = isShiftActive,
-                    buttonText = {Superscript(text = "ln")},
-                    shiftDescriptor = {Superscript(text = "RNG", isOnButton = false)}
-                )
-            }
-        }
-    }
-}
 
 
-//@Preview
-//@Composable
-//fun MainButtonPreview() {
-//    OldSchoolCalculatorTheme(dynamicColor = false) {
-//        Layout()
-//    }
-//}
 
 @Preview
 @Composable
-fun TopDrawerPreview() {
+fun MainButtonPreview() {
     OldSchoolCalculatorTheme(dynamicColor = false) {
-        TopDrawer(calculator = Calculator())
+        Layout()
     }
 }
+
+
 
 
