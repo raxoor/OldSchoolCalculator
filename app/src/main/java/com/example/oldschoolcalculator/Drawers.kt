@@ -5,10 +5,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -22,6 +26,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.oldschoolcalculator.ui.theme.OldSchoolCalculatorTheme
 
+@Composable
+fun VerticalLine(
+    modifier: Modifier = Modifier
+){
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(4.dp)
+            .background(color = Color.Black)
+    ) {}
+}
 @Composable
 fun TopDrawer(
     modifier: Modifier = Modifier,
@@ -42,22 +57,26 @@ fun TopDrawer(
                 modifier = modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
+
                 GreenLightButton(
-                    text = "DEG",
+                    option = AngleUnits.DEG,
                     calculator = calculator,
                     selected = selectedButton == "DEG"
                 ) { selectedButton = "DEG" }
                 GreenLightButton(
-                    text = "RAD",
+                    option = AngleUnits.RAD,
                     calculator = calculator,
                     selected = selectedButton == "RAD"
                 ) { selectedButton = "RAD" }
                 GreenLightButton(
-                    text = "GRA",
+                    option = AngleUnits.GRAD,
                     calculator = calculator,
                     selected = selectedButton == "GRA"
                 ) { selectedButton = "GRA" }
+
             }
+
+            VerticalLine()
             Row(
                 modifier = modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(
@@ -65,11 +84,13 @@ fun TopDrawer(
                     alignment = Alignment.CenterHorizontally
                 )
             ) {
-                ShiftButton(text = "Shift") { isShiftActive = !isShiftActive }
+                ShiftButton { isShiftActive = !isShiftActive }
                 ShiftableButton(
                     modifier = modifier,
                     calculator = calculator,
                     isActive = isShiftActive,
+                    primary = Operation.SIN,
+                    secondary = Operation.ARCSIN,
                     buttonText = { Superscript(text = "sin") },
                     shiftDescriptor = {
                         Superscript(
@@ -83,6 +104,8 @@ fun TopDrawer(
                     modifier = modifier,
                     calculator = calculator,
                     isActive = isShiftActive,
+                    primary = Operation.COS,
+                    secondary = Operation.ARCCOS,
                     buttonText = { Superscript(text = "cos") },
                     shiftDescriptor = {
                         Superscript(
@@ -96,6 +119,8 @@ fun TopDrawer(
                     modifier = modifier,
                     calculator = calculator,
                     isActive = isShiftActive,
+                    primary = Operation.TAN,
+                    secondary = Operation.ARCTAN,
                     buttonText = { Superscript(text = "tan") },
                     shiftDescriptor = {
                         Superscript(
@@ -106,6 +131,7 @@ fun TopDrawer(
                     }
                 )
             }
+
             Row(
                 modifier = modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(
@@ -117,6 +143,8 @@ fun TopDrawer(
                     modifier = modifier,
                     calculator = calculator,
                     isActive = isShiftActive,
+                    primary = Operation.SQUARED,
+                    secondary = Operation.POWER,
                     buttonText = { Superscript(text = "x", superscript = "2") },
                     shiftDescriptor = {
                         Superscript(
@@ -130,6 +158,8 @@ fun TopDrawer(
                     modifier = modifier,
                     calculator = calculator,
                     isActive = isShiftActive,
+                    primary = Operation.SQUARE_ROOT,
+                    secondary = Operation.ROOT,
                     buttonText = { Superscript(text = "√x") },
                     shiftDescriptor = {
                         Superscript(
@@ -144,6 +174,8 @@ fun TopDrawer(
                     modifier = modifier,
                     calculator = calculator,
                     isActive = isShiftActive,
+                    primary = Operation.LOG,
+                    secondary = Operation.ANTI_LOG,
                     buttonText = { Superscript(text = "Log") },
                     shiftDescriptor = {
                         Superscript(
@@ -157,10 +189,13 @@ fun TopDrawer(
                     modifier = modifier,
                     calculator = calculator,
                     isActive = isShiftActive,
+                    primary = Operation.TO_DEG,
+                    secondary = Operation.FROM_DEG,
                     buttonText = { Superscript(text = "→°' \"") },
                     shiftDescriptor = { Superscript(text = "°' \"→", isOnButton = false) }
                 )
             }
+
             Row(
                 modifier = modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(
@@ -172,6 +207,8 @@ fun TopDrawer(
                     modifier = modifier,
                     calculator = calculator,
                     isActive = isShiftActive,
+                    primary = Operation.RECIPROCAL,
+                    secondary = Operation.FACTORIAL,
                     buttonText = { Superscript(text = "1/x") },
                     shiftDescriptor = { Superscript(text = "x!", isOnButton = false) }
                 )
@@ -179,6 +216,8 @@ fun TopDrawer(
                     modifier = modifier,
                     calculator = calculator,
                     isActive = isShiftActive,
+                    primary = Operation.PI,
+                    secondary = Operation.EULER,
                     buttonText = { Superscript(text = "π") },
                     shiftDescriptor = { Superscript(text = "e", isOnButton = false) }
                 )
@@ -186,6 +225,8 @@ fun TopDrawer(
                     modifier = modifier,
                     calculator = calculator,
                     isActive = isShiftActive,
+                    primary = Operation.PERCENT,
+                    secondary = Operation.MODULO,
                     buttonText = { Superscript(text = "%") },
                     shiftDescriptor = { Superscript(text = "MOD", isOnButton = false) }
                 )
@@ -193,6 +234,8 @@ fun TopDrawer(
                     modifier = modifier,
                     calculator = calculator,
                     isActive = isShiftActive,
+                    primary = Operation.RNG,
+                    secondary = Operation.NAT_LOG,
                     buttonText = { Superscript(text = "ln") },
                     shiftDescriptor = { Superscript(text = "RNG", isOnButton = false) }
                 )
@@ -209,11 +252,25 @@ fun TopDrawerPreview() {
     }
 }
 
+fun loop(current: Int, len: Int): Int {
+    return if (current == len - 1) 0
+    else current + 1
+}
+
 @Composable
 fun BottomDrawer(
     modifier: Modifier = Modifier,
     calculator: Calculator
 ) {
+
+    var bitWidthState by remember { mutableIntStateOf(0) }
+    var numBaseState by remember { mutableIntStateOf(0) }
+    val bitWidth = arrayOf(BitWidth.QWORD, BitWidth.DWORD, BitWidth.WORD, BitWidth.BYTE)
+    val numBase = arrayOf(NumberBase.DEC, NumberBase.HEX, NumberBase.OCT, NumberBase.BIN)
+    val hexButtonsEnabled = numBase[numBaseState] == NumberBase.HEX
+
+    var numberInMemory by remember { mutableStateOf(false) }
+
     Box(
         modifier = modifier
             .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
@@ -230,18 +287,18 @@ fun BottomDrawer(
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             Row {
-                TextColorButton(onClick = {}, textColor = Colors.BlackButtonLetterBackground, text = "M+", modifier = modifier, calculator = calculator)
-                TextColorButton(onClick = {}, textColor = Colors.BlackButtonLetterBackground, text = "M-", modifier = modifier, calculator = calculator)
-                TextColorButton(onClick = {}, textColor = Colors.BlackButtonLetterBackground, text = "MR", modifier = modifier, calculator = calculator)
-                TextColorButton(onClick = {}, textColor = Colors.BlackButtonLetterBackground, text = "MC", modifier = modifier, calculator = calculator)
-                TextColorButton(onClick = {}, textColor = Colors.BlackButtonLetterBackground, text = "A", modifier = modifier, calculator = calculator)
+                TextColorButton(onClick = {numberInMemory = true}, enabled = true, option = Operation.MEMORY_ADD, modifier = modifier, calculator = calculator)
+                TextColorButton(onClick = {numberInMemory = true}, enabled = true, option = Operation.MEMORY_SUBTRACT, modifier = modifier, calculator = calculator)
+                TextColorButton(onClick = {}, enabled = numberInMemory, option = Operation.MEMORY_READ, modifier = modifier, calculator = calculator)
+                TextColorButton(onClick = {numberInMemory = false}, enabled = numberInMemory, option = Operation.MEMORY_CLEAR, modifier = modifier, calculator = calculator)
+                TextColorButton(onClick = {}, enabled = hexButtonsEnabled, option = Operation.HEX_A, modifier = modifier, calculator = calculator)
             }
             Row {
-                TextColorButton(onClick = {}, textColor = Colors.BlackButtonLetterBackground, text = "B", modifier = modifier, calculator = calculator)
-                TextColorButton(onClick = {}, textColor = Colors.BlackButtonLetterBackground, text = "C", modifier = modifier, calculator = calculator)
-                TextColorButton(onClick = {}, textColor = Colors.BlackButtonLetterBackground, text = "D", modifier = modifier, calculator = calculator)
-                TextColorButton(onClick = {}, textColor = Colors.BlackButtonLetterBackground, text = "E", modifier = modifier, calculator = calculator)
-                TextColorButton(onClick = {}, textColor = Colors.BlackButtonLetterBackground, text = "F", modifier = modifier, calculator = calculator)
+                TextColorButton(onClick = {}, enabled = hexButtonsEnabled, option = Operation.HEX_B, modifier = modifier, calculator = calculator)
+                TextColorButton(onClick = {}, enabled = hexButtonsEnabled, option = Operation.HEX_C, modifier = modifier, calculator = calculator)
+                TextColorButton(onClick = {}, enabled = hexButtonsEnabled, option = Operation.HEX_D, modifier = modifier, calculator = calculator)
+                TextColorButton(onClick = {}, enabled = hexButtonsEnabled, option = Operation.HEX_E, modifier = modifier, calculator = calculator)
+                TextColorButton(onClick = {}, enabled = hexButtonsEnabled, option = Operation.HEX_F, modifier = modifier, calculator = calculator)
             }
             Row(
                 horizontalArrangement = Arrangement.Center
@@ -252,25 +309,15 @@ fun BottomDrawer(
                 LogicalButton(operation = LogicalOperators.NOT, calculator = calculator)
             }
             Row {
+
                 LogicalButton(operation = LogicalOperators.NOR, calculator = calculator)
                 LogicalButton(operation = LogicalOperators.NAND, calculator = calculator)
-                MultiOptionButton(
-                    calculator = calculator,
-                    options = arrayOf(
-                        Option( option = BitWidth.QWORD, textColor = Color.White),
-                        Option( option = BitWidth.DWORD, textColor = Color.Yellow),
-                        Option( option = BitWidth.WORD, textColor = Color.Magenta),
-                        Option( option = BitWidth.BYTE, textColor = Color.Green)
-                    ))
-                MultiOptionButton(
-                    calculator = calculator,
-                    options = arrayOf(
-                        Option(option = NumberBase.DEC, textColor = Color.White),
-                        Option(option = NumberBase.HEX, textColor = Color.Yellow),
-                        Option(option = NumberBase.OCT, textColor = Color.Magenta),
-                        Option(option = NumberBase.BIN, textColor = Color.Green)
-
-                    ))
+                SelectorButton(
+                    option = bitWidth[bitWidthState],
+                    onClick = { /*TODO: Calculator fun*/ bitWidthState = loop(bitWidthState, bitWidth.size) },)
+                SelectorButton(
+                    option = numBase[numBaseState],
+                    onClick = { /*TODO: Calculator fun*/ numBaseState = loop(numBaseState, numBase.size) },)
             }
         }
     }

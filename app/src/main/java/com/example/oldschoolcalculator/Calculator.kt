@@ -99,27 +99,3 @@ class Calculator {
 
 }
 
-enum class Operation(val symbol: String) {
-    ADD("+"),
-    SUBTRACT("-"),
-    MULTIPLY("X"),
-    DIVIDE("/"),
-    CLEAR("C"),
-    CLEAR_CURRENT("CE"),
-    CHANGE_SIGN("+/-"),
-    BACKSPACE("◄"),
-    ENTER("=");
-
-    companion object {
-        fun fromSymbol(symbol: String): Operation {
-            for (op in Operation.entries) {
-                if (symbol == op.symbol) {
-                    return op
-                }
-            }
-            return ENTER
-        }
-
-        val imediate = listOf(BACKSPACE, CHANGE_SIGN, CLEAR_CURRENT, CLEAR)
-    }
-}

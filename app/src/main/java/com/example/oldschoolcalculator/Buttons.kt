@@ -2,7 +2,6 @@ package com.example.oldschoolcalculator
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
@@ -40,6 +39,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -53,7 +53,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 
@@ -116,7 +115,7 @@ fun DrawerButton(
 fun GreenLightButton(
     modifier: Modifier = Modifier,
     selected: Boolean,
-    text: String,
+    option: AngleUnits,
     calculator: Calculator,
     onClick: () -> Unit,
 ) {
@@ -129,7 +128,7 @@ fun GreenLightButton(
     ) {
         ElevatedButton(
             modifier = modifier.fillMaxSize(),
-            onClick = { calculator.buttonPress(text = text); onClick() },
+            onClick = { calculator.buttonPress(text = option.toString()); onClick() },
             colors = ButtonColors(
                 contentColor = Color.Black,
                 containerColor = Color.LightGray,
@@ -167,7 +166,7 @@ fun GreenLightButton(
                 modifier = modifier
                     .fillMaxSize()
                     .offset(y = 2.dp),
-                text = text,
+                text = option.toString(),
                 style = MaterialTheme.typography.displayLarge,
                 fontSize = 32.sp,
                 color = Color.Black,
@@ -179,7 +178,11 @@ fun GreenLightButton(
 }
 
 @Composable
-fun NumpadButton(text: String, calculator: Calculator, modifier: Modifier = Modifier) {
+fun NumpadButton(
+    text: String,
+    calculator: Calculator,
+    modifier: Modifier = Modifier
+) {
     val defaultButtonGradient = listOf(Colors.LightGray, Color.DarkGray)
     var buttonGradient by remember { mutableStateOf(defaultButtonGradient) }
     val interactionSource = remember { MutableInteractionSource() }
@@ -282,6 +285,8 @@ fun Superscript(
 fun ShiftableButton(
     modifier: Modifier = Modifier,
     calculator: Calculator,
+    primary: Operation,
+    secondary: Operation,
     isActive: Boolean,
     buttonText: @Composable () -> Unit,
     shiftDescriptor: @Composable () -> Unit
@@ -343,7 +348,6 @@ fun ShiftableButton(
 @Composable
 fun ShiftButton(
     modifier: Modifier = Modifier,
-    text: String,
     onClick: () -> Unit
 ) {
     ElevatedButton(
@@ -368,7 +372,7 @@ fun ShiftButton(
         Text(
             modifier = modifier
                 .fillMaxSize(),
-            text = text,
+            text = "Shift",
             style = MaterialTheme.typography.displayLarge,
             fontSize = 26.sp,
             color = Color.White,
@@ -383,14 +387,15 @@ fun ShiftButton(
 @Composable
 fun TextColorButton(
     modifier: Modifier = Modifier,
-    text: String,
-    textColor: Color,
+    option: Operation,
     calculator: Calculator,
+    enabled: Boolean = false,
     onClick: () -> Unit
 
 ) {
 
     ElevatedButton(
+        enabled = enabled,
         modifier = modifier
             .height(56.dp)
             .width(76.dp)
@@ -398,10 +403,10 @@ fun TextColorButton(
         onClick = onClick,
         shape = RoundedCornerShape(10),
         colors = ButtonColors(
-            contentColor = Color.Transparent,
+            contentColor = Color.White,
             containerColor = Color.Black,
-            disabledContentColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent
+            disabledContentColor = Colors.BlackButtonLetterBackground,
+            disabledContainerColor = Color.Black
         ),
         contentPadding = PaddingValues(0.dp),
         elevation = ButtonDefaults.buttonElevation(
@@ -413,10 +418,8 @@ fun TextColorButton(
         ) {
         Text(
             modifier = modifier,
-            text = text,
+            text = option.symbol,
             style = MaterialTheme.typography.displayLarge,
-            color = textColor,
-
             )
     }
 
@@ -457,20 +460,13 @@ fun LogicalButton(
     }
 }
 
-class Option<T>(val option: T, val textColor: Color)
-
-fun loop(current: Int, len: Int): Int{
-    return if(current == len -1) 0
-    else current + 1
-}
-
 @Composable
-fun <T> MultiOptionButton(
+fun <T> SelectorButton(
     modifier: Modifier = Modifier,
-    calculator: Calculator,
-    options: Array<Option<T>>
+    option: T,
+    onClick: () -> Unit
 ) {
-    var state by remember { mutableIntStateOf(0) }
+
 
     Box(
         modifier = modifier
@@ -491,32 +487,32 @@ fun <T> MultiOptionButton(
             modifier = modifier
                 .fillMaxSize()
                 .padding(top = 6.dp, bottom = 6.dp, start = 4.dp, end = 4.dp),
-            onClick = {state = loop(state, options.size)},
+            onClick = onClick,
             shape = RoundedCornerShape(35),
             contentPadding = PaddingValues(0.dp),
             colors = ButtonColors(
                 containerColor = Color.Blue,
-                contentColor = options[state].textColor,
+                contentColor = Color.White,
                 disabledContentColor = Color.Transparent,
                 disabledContainerColor = Color.Transparent
             )
         ) {
             AnimatedContent(
-                targetState = state,
+                targetState = option,
                 transitionSpec = {
-                    slideInVertically{-it} togetherWith slideOutVertically { it }
+                    slideInVertically { -it } togetherWith slideOutVertically { it }
                 }
-            ) { state ->
+            ) { option ->
                 Box(
                     modifier = modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
-                    ) {
-                Text(
-                    text = options[state].option.toString(),
-                    style = MaterialTheme.typography.displayLarge,
-                    fontSize = 20.sp
-                )
-            }
+                ) {
+                    Text(
+                        text = option.toString(),
+                        style = MaterialTheme.typography.displayLarge,
+                        fontSize = 20.sp
+                    )
+                }
             }
         }
     }
@@ -527,15 +523,11 @@ fun <T> MultiOptionButton(
 @Composable
 fun MultipleOptionButtonPreview() {
     OldSchoolCalculatorTheme(dynamicColor = false) {
-        MultiOptionButton<BitWidth>(
-            calculator = Calculator(),
-            options = arrayOf(
-                Option(
-                    option = BitWidth.QWORD, textColor = Color.Green
-
-                )
-            )
+        SelectorButton<BitWidth>(
+            option = BitWidth.QWORD,
+            onClick = {}
         )
+
     }
 }
 
@@ -559,7 +551,7 @@ fun BigButtonPreview() {
 @Composable
 fun ColorRadioButtonPreview() {
     OldSchoolCalculatorTheme(dynamicColor = false) {
-        GreenLightButton(selected = true, calculator = Calculator(), text = "DEG") {}
+        GreenLightButton(selected = true, calculator = Calculator(), option = AngleUnits.GRAD) {}
     }
 }
 
@@ -570,6 +562,8 @@ fun ShiftableButtonPreview() {
         ShiftableButton(
             calculator = Calculator(),
             isActive = true,
+            primary = Operation.SIN,
+            secondary = Operation.ARCSIN,
             buttonText = { Superscript(text = "sin", superscript = "-1") },
         ) { Superscript(text = "sin", superscript = "-1", isOnButton = false) }
     }
@@ -579,7 +573,7 @@ fun ShiftableButtonPreview() {
 @Composable
 fun ShiftButtonPreview() {
     OldSchoolCalculatorTheme(dynamicColor = false) {
-        ShiftButton(text = "Shift", onClick = {})
+        ShiftButton(onClick = {})
     }
 }
 
@@ -588,9 +582,8 @@ fun ShiftButtonPreview() {
 fun TextColorButtonPreview() {
     OldSchoolCalculatorTheme(dynamicColor = false) {
         TextColorButton(
-            text = "MC",
+            option = Operation.MEMORY_READ,
             onClick = {},
-            textColor = Color.White,
             calculator = Calculator()
         )
     }
