@@ -149,8 +149,14 @@ private fun Keypad(
             )
         //.background(color = Color.DarkGray)
     ) {
+        val mainKeypad = arrayOf(
+            arrayOf("7", "8", "9", "X", "◄"),
+            arrayOf("4", "5", "6", "/", "CE"),
+            arrayOf("1", "2", "3", "+", "C"),
+            arrayOf("0", ".", "+/-", " - ", " = ")
+        )
         Column {
-            for (row in ButtonLayout.main) {
+            for (row in mainKeypad) {
                 Row {
                     for (col in row)
                         NumpadButton(text = col, calculator = calculator)
