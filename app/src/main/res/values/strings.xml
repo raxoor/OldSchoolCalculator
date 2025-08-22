@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">OldSchoolCalculator</string>
+    <string name="header">Old School Calculator</string>
 </resources>
