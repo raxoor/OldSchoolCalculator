@@ -40,7 +40,7 @@ fun TopDrawer(
     modifier: Modifier = Modifier,
     calculator: Calculator
 ) {
-    var selectedButton by remember { mutableStateOf("DEG") }
+    var selectedButton by remember { mutableStateOf(AngleUnits.RAD) }
     var isShiftActive by remember { mutableStateOf(false) }
     Box(
         modifier = modifier
@@ -59,18 +59,18 @@ fun TopDrawer(
                 GreenLightButton(
                     option = AngleUnits.DEG,
                     calculator = calculator,
-                    selected = selectedButton == "DEG"
-                ) { selectedButton = "DEG" }
+                    selected = selectedButton == AngleUnits.DEG
+                ) { selectedButton = AngleUnits.DEG }
                 GreenLightButton(
                     option = AngleUnits.RAD,
                     calculator = calculator,
-                    selected = selectedButton == "RAD"
-                ) { selectedButton = "RAD" }
+                    selected = selectedButton == AngleUnits.RAD
+                ) { selectedButton = AngleUnits.RAD }
                 GreenLightButton(
                     option = AngleUnits.GRAD,
                     calculator = calculator,
-                    selected = selectedButton == "GRA"
-                ) { selectedButton = "GRA" }
+                    selected = selectedButton == AngleUnits.GRAD
+                ) { selectedButton = AngleUnits.GRAD }
 
             }
 
@@ -232,8 +232,8 @@ fun TopDrawer(
                     modifier = modifier,
                     calculator = calculator,
                     isActive = isShiftActive,
-                    primary = Operation.RNG,
-                    secondary = Operation.NAT_LOG,
+                    primary = Operation.NAT_LOG,
+                    secondary = Operation.RNG,
                     buttonText = { Superscript(text = "ln") },
                     shiftDescriptor = { Superscript(text = "RNG", isOnButton = false) }
                 )
@@ -285,18 +285,18 @@ fun BottomDrawer(
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             Row {
-                TextColorButton(onClick = {numberInMemory = true}, enabled = true, option = Operation.MEMORY_ADD, modifier = modifier, calculator = calculator)
-                TextColorButton(onClick = {numberInMemory = true}, enabled = true, option = Operation.MEMORY_SUBTRACT, modifier = modifier, calculator = calculator)
-                TextColorButton(onClick = {}, enabled = numberInMemory, option = Operation.MEMORY_READ, modifier = modifier, calculator = calculator)
-                TextColorButton(onClick = {numberInMemory = false}, enabled = numberInMemory, option = Operation.MEMORY_CLEAR, modifier = modifier, calculator = calculator)
-                TextColorButton(onClick = {}, enabled = hexButtonsEnabled, option = Operation.HEX_A, modifier = modifier, calculator = calculator)
+                TextColorButton(onClick = {calculator.buttonPress(Operation.MEMORY_ADD); numberInMemory = true}, enabled = true, option = Operation.MEMORY_ADD, modifier = modifier)
+                TextColorButton(onClick = {calculator.buttonPress(Operation.MEMORY_SUBTRACT);numberInMemory = true}, enabled = true, option = Operation.MEMORY_SUBTRACT, modifier = modifier)
+                TextColorButton(onClick = {calculator.buttonPress(Operation.MEMORY_READ)}, enabled = numberInMemory, option = Operation.MEMORY_READ, modifier = modifier)
+                TextColorButton(onClick = {calculator.buttonPress(Operation.MEMORY_CLEAR);numberInMemory = false}, enabled = numberInMemory, option = Operation.MEMORY_CLEAR, modifier = modifier)
+                TextColorButton(onClick = {}, enabled = hexButtonsEnabled, option = Operation.HEX_A, modifier = modifier)
             }
             Row {
-                TextColorButton(onClick = {}, enabled = hexButtonsEnabled, option = Operation.HEX_B, modifier = modifier, calculator = calculator)
-                TextColorButton(onClick = {}, enabled = hexButtonsEnabled, option = Operation.HEX_C, modifier = modifier, calculator = calculator)
-                TextColorButton(onClick = {}, enabled = hexButtonsEnabled, option = Operation.HEX_D, modifier = modifier, calculator = calculator)
-                TextColorButton(onClick = {}, enabled = hexButtonsEnabled, option = Operation.HEX_E, modifier = modifier, calculator = calculator)
-                TextColorButton(onClick = {}, enabled = hexButtonsEnabled, option = Operation.HEX_F, modifier = modifier, calculator = calculator)
+                TextColorButton(onClick = {}, enabled = hexButtonsEnabled, option = Operation.HEX_B, modifier = modifier)
+                TextColorButton(onClick = {}, enabled = hexButtonsEnabled, option = Operation.HEX_C, modifier = modifier)
+                TextColorButton(onClick = {}, enabled = hexButtonsEnabled, option = Operation.HEX_D, modifier = modifier)
+                TextColorButton(onClick = {}, enabled = hexButtonsEnabled, option = Operation.HEX_E, modifier = modifier)
+                TextColorButton(onClick = {}, enabled = hexButtonsEnabled, option = Operation.HEX_F, modifier = modifier)
             }
             Row(
                 horizontalArrangement = Arrangement.Center
@@ -312,10 +312,10 @@ fun BottomDrawer(
                 LogicalButton(operation = LogicalOperators.NAND, calculator = calculator)
                 SelectorButton(
                     option = bitWidth[bitWidthState],
-                    onClick = { /*TODO: Calculator fun*/ bitWidthState = loop(bitWidthState, bitWidth.size) },)
+                    onClick = { calculator.buttonPress(bitWidth[bitWidthState]); bitWidthState = loop(bitWidthState, bitWidth.size) },)
                 SelectorButton(
                     option = numBase[numBaseState],
-                    onClick = { /*TODO: Calculator fun*/ numBaseState = loop(numBaseState, numBase.size) },)
+                    onClick = { numBaseState = loop(numBaseState, numBase.size); calculator.buttonPress(numBase[numBaseState]) },)
             }
         }
     }

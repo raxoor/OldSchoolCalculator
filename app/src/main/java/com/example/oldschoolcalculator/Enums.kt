@@ -1,6 +1,6 @@
 package com.example.oldschoolcalculator
 
-enum class LogicalOperators{
+enum class LogicalOperators {
     AND,
     OR,
     XOR,
@@ -9,24 +9,18 @@ enum class LogicalOperators{
     NAND
 }
 
-enum class NumberBase{
-    BIN,
-    OCT,
-    DEC,
-    HEX
+enum class NumberBase(val symbol: String) {
+    BIN("%b"),
+    OCT("o"),
+    DEC("%d"),
+    HEX("%X")
 }
 
-enum class BitWidth{
+enum class BitWidth {
     BYTE,
     WORD,
     DWORD,
     QWORD
-}
-
-enum class AngleUnits{
-    DEG,
-    RAD,
-    GRAD
 }
 
 enum class Operation(val symbol: String) {
@@ -89,6 +83,46 @@ enum class Operation(val symbol: String) {
             return ENTER
         }
 
-        val imediate = listOf(BACKSPACE, CHANGE_SIGN, CLEAR_CURRENT, CLEAR)
+        val immediate = listOf(
+            BACKSPACE,
+            CHANGE_SIGN,
+            CLEAR_CURRENT,
+            CLEAR,
+            MEMORY_ADD,
+            MEMORY_SUBTRACT,
+            MEMORY_READ,
+            MEMORY_CLEAR,
+            SIN,
+            COS,
+            TAN,
+            ARCSIN,
+            ARCCOS,
+            ARCTAN,
+            SQUARED,
+            SQUARE_ROOT,
+            LOG,
+            ANTI_LOG,
+            RECIPROCAL,
+            FACTORIAL,
+            PI,
+            EULER,
+            PERCENT,
+            RNG,
+            NAT_LOG
+        )
     }
+}
+
+enum class Digit(val symbol: Char) {
+    ONE('1'),
+    TWO('2'),
+    THREE('3'),
+    FOUR('4'),
+    FIVE('5'),
+    SIX('6'),
+    SEVEN('7'),
+    EIGHT('8'),
+    NINE('9'),
+    ZERO('0'),
+    DELIMITER('.');
 }

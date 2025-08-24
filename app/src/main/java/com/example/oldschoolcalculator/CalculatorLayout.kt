@@ -150,23 +150,27 @@ private fun Keypad(
         //.background(color = Color.DarkGray)
     ) {
         val mainKeypad = arrayOf(
-            arrayOf("7", "8", "9", "X", "◄"),
-            arrayOf("4", "5", "6", "/", "CE"),
-            arrayOf("1", "2", "3", "+", "C"),
-            arrayOf("0", ".", "+/-", " - ", " = ")
+            arrayOf(Digit.SEVEN, Digit.EIGHT, Digit.NINE, Operation.MULTIPLY, Operation.BACKSPACE),
+            arrayOf(Digit.FOUR, Digit.FIVE, Digit.SIX, Operation.DIVIDE, Operation.CLEAR_CURRENT),
+            arrayOf(Digit.ONE, Digit.TWO, Digit.THREE, Operation.ADD, Operation.CLEAR),
+            arrayOf(
+                Digit.ZERO,
+                Digit.DELIMITER,
+                Operation.CHANGE_SIGN,
+                Operation.SUBTRACT,
+                Operation.ENTER
+            )
         )
         Column {
             for (row in mainKeypad) {
                 Row {
                     for (col in row)
-                        NumpadButton(text = col, calculator = calculator)
+                        NumpadButton(option = col, calculator = calculator)
                 }
             }
         }
     }
 }
-
-
 
 
 @Preview

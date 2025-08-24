@@ -128,7 +128,7 @@ fun GreenLightButton(
     ) {
         ElevatedButton(
             modifier = modifier.fillMaxSize(),
-            onClick = { calculator.buttonPress(text = option.toString()); onClick() },
+            onClick = { calculator.buttonPress(option); onClick() },
             colors = ButtonColors(
                 contentColor = Color.Black,
                 containerColor = Color.LightGray,
@@ -178,8 +178,8 @@ fun GreenLightButton(
 }
 
 @Composable
-fun NumpadButton(
-    text: String,
+fun <T>NumpadButton(
+    option: T,
     calculator: Calculator,
     modifier: Modifier = Modifier
 ) {
@@ -195,12 +195,13 @@ fun NumpadButton(
             }
         }
     }
+
     ElevatedButton(
         modifier = modifier
             .height(56.dp)
             .width(76.dp)
             .padding(top = 6.dp, bottom = 6.dp, start = 4.dp, end = 4.dp),
-        onClick = { calculator.buttonPress(text) },
+        onClick = { calculator.buttonPress(option) },
         colors = ButtonColors(
             containerColor = Colors.LightGray,
             contentColor = Color.White,
@@ -222,7 +223,7 @@ fun NumpadButton(
                 .background(brush = Brush.linearGradient(colors = buttonGradient)),
         ) {
             Text(
-                text = text,
+                text = when(option){is Digit -> option.symbol.toString(); is Operation -> option.symbol; else -> error("Invalid type in NumpadButton")},
                 color = Color.White,
                 style = MaterialTheme.typography.displayLarge
             )
@@ -303,7 +304,7 @@ fun ShiftableButton(
         ) {
             ElevatedButton(
                 modifier = modifier.fillMaxWidth(),
-                onClick = { },
+                onClick = { if (isActive) calculator.buttonPress(secondary) else calculator.buttonPress(primary)},
                 colors = ButtonColors(
                     containerColor = Color.LightGray,
                     contentColor = Color.Transparent,
@@ -388,7 +389,6 @@ fun ShiftButton(
 fun TextColorButton(
     modifier: Modifier = Modifier,
     option: Operation,
-    calculator: Calculator,
     enabled: Boolean = false,
     onClick: () -> Unit
 
@@ -437,7 +437,7 @@ fun LogicalButton(
             .height(56.dp)
             .width(96.dp)
             .padding(top = 6.dp, bottom = 6.dp, start = 4.dp, end = 4.dp),
-        onClick = {},
+        onClick = {calculator.buttonPress(operation)},
         shape = RoundedCornerShape(10),
         contentPadding = PaddingValues(0.dp),
         colors = ButtonColors(
@@ -543,7 +543,7 @@ fun LogicalButtonPreview() {
 @Composable
 fun BigButtonPreview() {
     OldSchoolCalculatorTheme(dynamicColor = false) {
-        NumpadButton(text = "5", calculator = Calculator())
+        NumpadButton(option = Digit.FIVE, calculator = Calculator())
     }
 }
 
@@ -583,8 +583,7 @@ fun TextColorButtonPreview() {
     OldSchoolCalculatorTheme(dynamicColor = false) {
         TextColorButton(
             option = Operation.MEMORY_READ,
-            onClick = {},
-            calculator = Calculator()
+            onClick = {}
         )
     }
 }
