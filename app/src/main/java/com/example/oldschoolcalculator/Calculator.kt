@@ -8,8 +8,9 @@ import kotlin.random.Random
 
 class Calculator {
     private var displayMode = false
-    var input by mutableStateOf(ZERO_STR)
+    var display: String by mutableStateOf(ZERO_STR)
         private set
+
     private var accumulator: Double = 0.0
     private var memory: Double = 0.0
     private var angleUnits: AngleUnits = AngleUnits.RAD
@@ -38,15 +39,16 @@ class Calculator {
             }
             is Operation -> execute(button)
             is AngleUnits -> {
-                this.input = fitDouble(
+                this.display = fitDouble(
                     AngleUnitsConversion.convert(
-                        this.input.toDouble(), this.angleUnits, button
+                        this.display.toDouble(), this.angleUnits, button
                     ).toString()
                 )
                 this.angleUnits = button
                 displayMode = true
             }
             is NumberBase -> {
+                this.display = displayToDouble().toString()
                 this.numBase = button
                 numBaseOutputSelector()
                 displayMode = true
@@ -60,54 +62,56 @@ class Calculator {
     }
 
     fun appendInput(symbol: Char) {
-        if (this.input == ZERO_STR || displayMode || this.input == "-0") {
-            this.input = "" + symbol
+        if (this.display == ZERO_STR || displayMode || this.display == "-0") {
+            this.display = "" + symbol
             displayMode = false
-        } else if (symbol == '.' && input.contains(symbol)) return
-        else if (input.length < DIGITNUM)
-            this.input += symbol
+        } else if (symbol == '.' && display.contains(symbol)) return
+        else if (display.length < DIGITNUM)
+            this.display += symbol
     }
 
     fun clearAll() {
-        this.input = ZERO_STR
+        this.display = ZERO_STR
         this.accumulator = 0.0
         this.displayMode = false
     }
 
     fun numBaseOutputSelector() {
-        val num: Double = input.toDoubleOrNull()?:return
+        val num: Double = display.toDoubleOrNull()?:return
         if(num % 1.0 == 0.0) {
             val value: Int = num.toInt()
             val format: String = when (this.numBase) {
                 NumberBase.DEC -> NumberBase.DEC.symbol
                 NumberBase.HEX -> NumberBase.HEX.symbol
                 NumberBase.OCT -> NumberBase.OCT.symbol
-                NumberBase.BIN -> NumberBase.BIN.symbol
             }
-            input = String.format(format, value)
+            display = String.format(format, value)
 
+        }
+    }
+
+    fun displayToDouble(): Double{
+        return when(this.numBase){
+            NumberBase.DEC -> display.toDoubleOrNull() ?: 0.0
+            NumberBase.HEX -> display.toInt(16).toDouble()
+            NumberBase.OCT -> display.toInt(8).toDouble()
         }
     }
 
     fun execute(incoming: Operation) {
 
-        val number = when(this.numBase){
-            NumberBase.DEC -> input.toDoubleOrNull() ?: 0.0
-            NumberBase.HEX -> input.toInt(16).toDouble()
-            NumberBase.OCT -> input.toInt(8).toDouble()
-            NumberBase.BIN -> input.toInt(2).toDouble()
-        }
+        val number = displayToDouble()
 
         if (incoming in Operation.immediate) {
             when (incoming) {
-                Operation.BACKSPACE -> input = input.dropLast(1)
+                Operation.BACKSPACE -> display = display.dropLast(1)
                 Operation.CLEAR -> {
                     clearAll(); return
                 }
 
-                Operation.CLEAR_CURRENT -> input = ZERO_STR
-                Operation.CHANGE_SIGN -> input =
-                    if (input[0] == '-') input.substring(1) else "-$input"
+                Operation.CLEAR_CURRENT -> display = ZERO_STR
+                Operation.CHANGE_SIGN -> display =
+                    if (display[0] == '-') display.substring(1) else "-$display"
 
                 Operation.MEMORY_ADD -> {
                     memory += number; displayMode = true
@@ -118,7 +122,7 @@ class Calculator {
                 }
 
                 Operation.MEMORY_READ -> {
-                    input = memory.toString()
+                    display = memory.toString()
                 }
 
                 Operation.MEMORY_CLEAR -> {
@@ -126,72 +130,73 @@ class Calculator {
                 }
 
                 Operation.SIN -> {
-                    input = fitDouble(sin(number).toString())
+                    display = fitDouble(sin(number).toString())
                 }
 
                 Operation.COS -> {
-                    input = fitDouble(cos(number).toString())
+                    display = fitDouble(cos(number).toString())
                 }
 
                 Operation.TAN -> {
-                    input = fitDouble(tan(number).toString())
+                    display = fitDouble(tan(number).toString())
                 }
 
                 Operation.ARCSIN -> {
-                    input = fitDouble(asin(number).toString())
+                    display = fitDouble(asin(number).toString())
                 }
 
                 Operation.ARCCOS -> {
-                    input = fitDouble(acos(number).toString())
+                    display = fitDouble(acos(number).toString())
                 }
 
                 Operation.ARCTAN -> {
-                    input = fitDouble(atan(number).toString())
+                    display = fitDouble(atan(number).toString())
                 }
 
                 Operation.SQUARED -> {
-                    input = fitDouble(number.pow(2.0).toString())
+                    display = fitDouble(number.pow(2.0).toString())
                 }
 
                 Operation.SQUARE_ROOT -> {
-                    input = fitDouble(sqrt(number).toString())
+                    display = fitDouble(sqrt(number).toString())
                 }
 
                 Operation.LOG -> {
-                    input = fitDouble(log2(number).toString())
+                    display = fitDouble(log2(number).toString())
                 }
 
                 Operation.ANTI_LOG -> {
-                    input = fitDouble(10.0.pow(number).toString())
+                    display = fitDouble(10.0.pow(number).toString())
                 }
 
                 Operation.RECIPROCAL -> {
-                    input = fitDouble((1.0 / number).toString())
+                    display = fitDouble((1.0 / number).toString())
                 }
 
                 Operation.FACTORIAL -> {
-                    input = fitDouble(factorial(number.toInt()).toString())
+                    display = fitDouble(factorial(number.toInt()).toString())
                 }
 
                 Operation.PI -> {
-                    input = PI.toString()
+                    display = PI.toString()
                 }
 
                 Operation.EULER -> {
-                    input = EULER.toString()
+                    display = EULER.toString()
                 }
 
                 Operation.PERCENT -> {
-                    input = fitDouble((accumulator * (number / 100.0)).toString())
+                    display = fitDouble((accumulator * (number / 100.0)).toString())
                 }
 
                 Operation.RNG -> {
-                    input = fitDouble(Random.Default.nextDouble().toString())
+                    display = fitDouble(Random.Default.nextDouble().toString())
                 }
 
                 Operation.NAT_LOG -> {
-                    input = fitDouble(log(number, EULER).toString())
+                    display = fitDouble(log(number, EULER).toString())
                 }
+                Operation.NOT -> if(number % 1 == 0.0)fitDouble(number.toInt().inv().toString())else errorOut()
 
                 else -> error("Unreachable branch triggered in execute")
             }
@@ -205,11 +210,22 @@ class Calculator {
                 Operation.POWER -> accumulator = accumulator.pow(number)
                 Operation.ROOT -> accumulator = accumulator.pow((1.0 / number))
                 Operation.MODULO -> accumulator = accumulator % number
+                Operation.AND -> accumulator = logicalOperation(accumulator, number,
+                    LogicalOperators.AND)
+                Operation.OR -> accumulator = logicalOperation(accumulator, number,
+                    LogicalOperators.OR)
+                Operation.XOR -> accumulator = logicalOperation(accumulator, number,
+                    LogicalOperators.XOR)
+                Operation.NOR -> accumulator = logicalOperation(accumulator, number,
+                    LogicalOperators.NOR)
+                Operation.NAND -> accumulator = logicalOperation(accumulator, number,
+                    LogicalOperators.NAND)
+
                 else -> error("Unreachable branch triggered in execute")
             }
             this.operation = incoming
             this.displayMode = true
-            this.input = fitDouble(accumulator.toString())
+            this.display = fitDouble(accumulator.toString())
         }
         numBaseOutputSelector()
     }
@@ -238,5 +254,21 @@ class Calculator {
         return "Error"
     }
 
+    fun logicalOperation(x: Double, y: Double, operator: LogicalOperators): Double{
+        if(x % 1 != 0.0 || y % 1 != 0.0) return 0.0
+        val a = x.toInt()
+        val b = y.toInt()
+
+        return when(operator){
+            LogicalOperators.AND -> a.and(b).toDouble()
+            LogicalOperators.OR ->  a.or(b).toDouble()
+            LogicalOperators.XOR -> a.xor(b).toDouble()
+            LogicalOperators.NOT -> 0.0
+            LogicalOperators.NOR -> a.or(b).inv().toDouble()
+            LogicalOperators.NAND -> a.and(b).inv().toDouble()
+        }
+    }
+
 }
+
 

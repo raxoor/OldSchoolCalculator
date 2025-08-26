@@ -118,7 +118,7 @@ private fun CalculatorDisplay(
                     color = Colors.DisplayBurnIn
                 )
                 Text(
-                    text = calculator.input,
+                    text = calculator.display,
                     textAlign = TextAlign.Left,
                     maxLines = 1,
                     fontFamily = FontFamily(Font(R.font.digital_display)),

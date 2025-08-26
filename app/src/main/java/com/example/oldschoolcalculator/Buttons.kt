@@ -386,12 +386,12 @@ fun ShiftButton(
 }
 
 @Composable
-fun TextColorButton(
+fun <T>TextColorButton(
     modifier: Modifier = Modifier,
-    option: Operation,
+    onClick: () -> Unit = {},
+    calculator: Calculator,
+    option: T,
     enabled: Boolean = false,
-    onClick: () -> Unit
-
 ) {
 
     ElevatedButton(
@@ -400,7 +400,7 @@ fun TextColorButton(
             .height(56.dp)
             .width(76.dp)
             .padding(top = 6.dp, bottom = 6.dp, start = 4.dp, end = 4.dp),
-        onClick = onClick,
+        onClick = { calculator.buttonPress(option) },
         shape = RoundedCornerShape(10),
         colors = ButtonColors(
             contentColor = Color.White,
@@ -418,7 +418,7 @@ fun TextColorButton(
         ) {
         Text(
             modifier = modifier,
-            text = option.symbol,
+            text = if(option is Operation)option.symbol else if(option is Digit)option.symbol.toString() else error("Unsupported option: type in TextColorButton"),
             style = MaterialTheme.typography.displayLarge,
             )
     }
@@ -429,7 +429,7 @@ fun TextColorButton(
 fun LogicalButton(
     modifier: Modifier = Modifier,
     calculator: Calculator,
-    operation: LogicalOperators,
+    operation: Operation,
 ) {
 
     ElevatedButton(
@@ -535,7 +535,7 @@ fun MultipleOptionButtonPreview() {
 @Composable
 fun LogicalButtonPreview() {
     OldSchoolCalculatorTheme(dynamicColor = false) {
-        LogicalButton(calculator = Calculator(), operation = LogicalOperators.NAND)
+        LogicalButton(calculator = Calculator(), operation = Operation.NAND)
     }
 }
 
@@ -583,7 +583,7 @@ fun TextColorButtonPreview() {
     OldSchoolCalculatorTheme(dynamicColor = false) {
         TextColorButton(
             option = Operation.MEMORY_READ,
-            onClick = {}
+            calculator = Calculator()
         )
     }
 }

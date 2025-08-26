@@ -10,8 +10,7 @@ enum class LogicalOperators {
 }
 
 enum class NumberBase(val symbol: String) {
-    BIN("%b"),
-    OCT("o"),
+    OCT("%o"),
     DEC("%d"),
     HEX("%X")
 }
@@ -37,12 +36,6 @@ enum class Operation(val symbol: String) {
     MEMORY_SUBTRACT("M-"),
     MEMORY_READ("MR"),
     MEMORY_CLEAR("MC"),
-    HEX_A("A"),
-    HEX_B("B"),
-    HEX_C("C"),
-    HEX_D("D"),
-    HEX_E("E"),
-    HEX_F("F"),
     AND("AND"),
     OR("OR"),
     XOR("XOR"),
@@ -108,7 +101,8 @@ enum class Operation(val symbol: String) {
             EULER,
             PERCENT,
             RNG,
-            NAT_LOG
+            NAT_LOG,
+            NOT
         )
     }
 }
@@ -124,5 +118,12 @@ enum class Digit(val symbol: Char) {
     EIGHT('8'),
     NINE('9'),
     ZERO('0'),
-    DELIMITER('.');
+    DELIMITER('.'),
+    A('A'),
+    B('B'),
+    C('C'),
+    D('D'),
+    E('E'),
+    F('F'),
+    ;
 }
