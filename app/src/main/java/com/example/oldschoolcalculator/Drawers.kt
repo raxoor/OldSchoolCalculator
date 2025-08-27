@@ -285,35 +285,37 @@ fun BottomDrawer(
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             Row {
-                TextColorButton(calculator = calculator, onClick = {numberInMemory = true}, enabled = true, option = Operation.MEMORY_ADD, modifier = modifier)
-                TextColorButton(calculator = calculator, onClick = {numberInMemory = true}, enabled = true, option = Operation.MEMORY_SUBTRACT, modifier = modifier)
-                TextColorButton(calculator = calculator, enabled = numberInMemory, option = Operation.MEMORY_READ, modifier = modifier)
-                TextColorButton(calculator = calculator, onClick = {numberInMemory = false}, enabled = numberInMemory, option = Operation.MEMORY_CLEAR, modifier = modifier)
-                TextColorButton(calculator = calculator, enabled = hexButtonsEnabled, option = Digit.A, modifier = modifier)
+                TextColorButton(calculator = calculator, onClick = {numberInMemory = true}, enabled = true, option = Operation.MEMORY_ADD, modifier = modifier.weight(1f))
+                TextColorButton(calculator = calculator, onClick = {numberInMemory = true}, enabled = true, option = Operation.MEMORY_SUBTRACT, modifier = modifier.weight(1f))
+                TextColorButton(calculator = calculator, enabled = numberInMemory, option = Operation.MEMORY_READ, modifier = modifier.weight(1f))
+                TextColorButton(calculator = calculator, onClick = {numberInMemory = false}, enabled = numberInMemory, option = Operation.MEMORY_CLEAR, modifier = modifier.weight(1f))
+                TextColorButton(calculator = calculator, enabled = hexButtonsEnabled, option = Digit.A, modifier = modifier.weight(1f))
             }
             Row {
-                TextColorButton(calculator = calculator, enabled = hexButtonsEnabled, option = Digit.B, modifier = modifier)
-                TextColorButton(calculator = calculator, enabled = hexButtonsEnabled, option = Digit.C, modifier = modifier)
-                TextColorButton(calculator = calculator, enabled = hexButtonsEnabled, option = Digit.D, modifier = modifier)
-                TextColorButton(calculator = calculator, enabled = hexButtonsEnabled, option = Digit.E, modifier = modifier)
-                TextColorButton(calculator = calculator, enabled = hexButtonsEnabled, option = Digit.F, modifier = modifier)
+                TextColorButton(calculator = calculator, enabled = hexButtonsEnabled, option = Digit.B, modifier = modifier.weight(1f))
+                TextColorButton(calculator = calculator, enabled = hexButtonsEnabled, option = Digit.C, modifier = modifier.weight(1f))
+                TextColorButton(calculator = calculator, enabled = hexButtonsEnabled, option = Digit.D, modifier = modifier.weight(1f))
+                TextColorButton(calculator = calculator, enabled = hexButtonsEnabled, option = Digit.E, modifier = modifier.weight(1f))
+                TextColorButton(calculator = calculator, enabled = hexButtonsEnabled, option = Digit.F, modifier = modifier.weight(1f))
             }
             Row(
                 horizontalArrangement = Arrangement.Center
             ) {
-                LogicalButton(operation = Operation.AND, calculator = calculator)
-                LogicalButton(operation = Operation.OR, calculator = calculator)
-                LogicalButton(operation = Operation.XOR, calculator = calculator)
-                LogicalButton(operation = Operation.NOT, calculator = calculator)
+                LogicalButton(operation = Operation.AND, calculator = calculator, modifier = modifier.weight(1f))
+                LogicalButton(operation = Operation.OR, calculator = calculator, modifier = modifier.weight(1f))
+                LogicalButton(operation = Operation.XOR, calculator = calculator, modifier = modifier.weight(1f))
+                LogicalButton(operation = Operation.NOT, calculator = calculator, modifier = modifier.weight(1f))
             }
             Row {
 
-                LogicalButton(operation = Operation.NOR, calculator = calculator)
-                LogicalButton(operation = Operation.NAND, calculator = calculator)
+                LogicalButton(operation = Operation.NOR, calculator = calculator, modifier = modifier.weight(1f))
+                LogicalButton(operation = Operation.NAND, calculator = calculator, modifier = modifier.weight(1f))
                 SelectorButton(
+                    modifier = modifier.weight(1f),
                     option = bitWidth[bitWidthState],
                     onClick = { bitWidthState = loop(bitWidthState, bitWidth.size); calculator.buttonPress(bitWidth[bitWidthState]) },)
                 SelectorButton(
+                    modifier = modifier.weight(1f),
                     option = numBase[numBaseState],
                     onClick = { numBaseState = loop(numBaseState, numBase.size); calculator.buttonPress(numBase[numBaseState]) },)
             }

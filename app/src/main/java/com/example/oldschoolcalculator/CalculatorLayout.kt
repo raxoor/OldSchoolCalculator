@@ -163,9 +163,9 @@ private fun Keypad(
         )
         Column {
             for (row in mainKeypad) {
-                Row {
+                Row() {
                     for (col in row)
-                        NumpadButton(option = col, calculator = calculator)
+                        NumpadButton(modifier = modifier.weight(1f), option = col, calculator = calculator)
                 }
             }
         }

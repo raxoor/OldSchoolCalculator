@@ -420,6 +420,7 @@ fun <T>TextColorButton(
             modifier = modifier,
             text = if(option is Operation)option.symbol else if(option is Digit)option.symbol.toString() else error("Unsupported option: type in TextColorButton"),
             style = MaterialTheme.typography.displayLarge,
+            textAlign = TextAlign.Center
             )
     }
 
@@ -455,7 +456,8 @@ fun LogicalButton(
         Text(
             text = operation.toString(),
             style = MaterialTheme.typography.displayLarge,
-            fontSize = 28.sp
+            fontSize = 22.sp,
+            maxLines = 1,
         )
     }
 }
@@ -510,7 +512,8 @@ fun <T> SelectorButton(
                     Text(
                         text = option.toString(),
                         style = MaterialTheme.typography.displayLarge,
-                        fontSize = 20.sp
+                        fontSize = 16.sp,
+                        maxLines = 1
                     )
                 }
             }
