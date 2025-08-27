@@ -15,6 +15,7 @@ class Calculator {
     private var memory: Double = 0.0
     private var angleUnits: AngleUnits = AngleUnits.RAD
     private var numBase: NumberBase = NumberBase.DEC
+    private var bitWidth: BitWidth = BitWidth.QWORD
     private var operation: Operation = Operation.ENTER
 
     companion object {
@@ -50,10 +51,17 @@ class Calculator {
             is NumberBase -> {
                 this.display = displayToDouble().toString()
                 this.numBase = button
+                bitWidthOutputSelector()
                 numBaseOutputSelector()
                 displayMode = true
             }
-            is BitWidth -> {/*TODO:*/
+            is BitWidth -> {
+                this.display = displayToDouble().toString()
+                this.bitWidth = button
+                bitWidthOutputSelector()
+                numBaseOutputSelector()
+                displayMode = true
+
             }
             else -> {
                 error("Undefined type passed from frontend")
@@ -77,7 +85,7 @@ class Calculator {
     }
 
     fun numBaseOutputSelector() {
-        val num: Double = display.toDoubleOrNull()?:return
+        val num: Double = display.toDoubleOrNull()?:0.0
         if(num % 1.0 == 0.0) {
             val value: Int = num.toInt()
             val format: String = when (this.numBase) {
@@ -87,6 +95,26 @@ class Calculator {
             }
             display = String.format(format, value)
 
+        }
+    }
+
+    fun bitWidthOutputSelector(){
+        display = when(this.bitWidth){
+            BitWidth.QWORD -> {
+                display.toDouble().toULong().toString()
+            }
+
+            BitWidth.DWORD -> {
+                display.toDouble().toUInt().toString()
+            }
+
+            BitWidth.WORD -> {
+                display.toDouble().toUInt().toUShort().toString()
+            }
+
+            BitWidth.BYTE -> {
+                display.toDouble().toUInt().toUByte().toString()
+            }
         }
     }
 
@@ -227,6 +255,7 @@ class Calculator {
             this.displayMode = true
             this.display = fitDouble(accumulator.toString())
         }
+        bitWidthOutputSelector()
         numBaseOutputSelector()
     }
 

@@ -312,7 +312,7 @@ fun BottomDrawer(
                 LogicalButton(operation = Operation.NAND, calculator = calculator)
                 SelectorButton(
                     option = bitWidth[bitWidthState],
-                    onClick = { calculator.buttonPress(bitWidth[bitWidthState]); bitWidthState = loop(bitWidthState, bitWidth.size) },)
+                    onClick = { bitWidthState = loop(bitWidthState, bitWidth.size); calculator.buttonPress(bitWidth[bitWidthState]) },)
                 SelectorButton(
                     option = numBase[numBaseState],
                     onClick = { numBaseState = loop(numBaseState, numBase.size); calculator.buttonPress(numBase[numBaseState]) },)
