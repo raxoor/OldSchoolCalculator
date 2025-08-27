@@ -399,7 +399,7 @@ fun <T>TextColorButton(
             .height(56.dp)
             .width(76.dp)
             .padding(top = 6.dp, bottom = 6.dp, start = 4.dp, end = 4.dp),
-        onClick = { calculator.buttonPress(option) },
+        onClick = { calculator.buttonPress(option); onClick() },
         shape = RoundedCornerShape(10),
         colors = ButtonColors(
             contentColor = Color.White,
@@ -526,7 +526,7 @@ fun <T> SelectorButton(
 fun MultipleOptionButtonPreview() {
     OldSchoolCalculatorTheme(dynamicColor = false) {
         SelectorButton<BitWidth>(
-            option = BitWidth.QWORD,
+            option = BitWidth.DWORD,
             onClick = {}
         )
 

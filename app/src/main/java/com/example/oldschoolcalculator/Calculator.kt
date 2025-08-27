@@ -15,16 +15,16 @@ class Calculator {
     private var memory: Double = 0.0
     private var angleUnits: AngleUnits = AngleUnits.RAD
     private var numBase: NumberBase = NumberBase.DEC
-    private var bitWidth: BitWidth = BitWidth.QWORD
+    private var bitWidth: BitWidth = BitWidth.DWORD
     private var operation: Operation = Operation.ENTER
 
     companion object {
         private const val ZERO_STR = "0"
-        private const val DIGITNUM = 9
+        private const val DIGITNUM = 10
 
         private const val PI = 3.14159
         private const val EULER = 2.71828
-        private val MAXINT: Long by lazy {
+        private val MAXDISPLAYABLE: Long by lazy {
             var x: Long = 9
             repeat(DIGITNUM - 1) {
                 x = x * 10 + 9
@@ -40,6 +40,10 @@ class Calculator {
             }
             is Operation -> execute(button)
             is AngleUnits -> {
+                if(this.numBase != NumberBase.DEC) {
+                    this.display = errorOut()
+                    return
+                }
                 this.display = fitDouble(
                     AngleUnitsConversion.convert(
                         this.display.toDouble(), this.angleUnits, button
@@ -49,17 +53,15 @@ class Calculator {
                 displayMode = true
             }
             is NumberBase -> {
-                this.display = displayToDouble().toString()
+                this.display = displayToNumber().toString()
                 this.numBase = button
-                bitWidthOutputSelector()
-                numBaseOutputSelector()
+                outputFormater()
                 displayMode = true
             }
             is BitWidth -> {
-                this.display = displayToDouble().toString()
+                this.display = displayToNumber().toString()
                 this.bitWidth = button
-                bitWidthOutputSelector()
-                numBaseOutputSelector()
+                outputFormater()
                 displayMode = true
 
             }
@@ -84,10 +86,24 @@ class Calculator {
         this.displayMode = false
     }
 
-    fun numBaseOutputSelector() {
-        val num: Double = display.toDoubleOrNull()?:0.0
+    //Formats the number to be displayed based on selected number base and bit width
+    fun outputFormater() {
+        val num: Double = display.toDoubleOrNull()?:return
         if(num % 1.0 == 0.0) {
-            val value: Int = num.toInt()
+            val value = when(this.bitWidth) {
+                BitWidth.DWORD -> {
+                    num.toInt()
+                }
+
+                BitWidth.WORD -> {
+                    num.toInt().toShort()
+                }
+
+                BitWidth.BYTE -> {
+                    num.toInt().toByte()
+                }
+            }
+
             val format: String = when (this.numBase) {
                 NumberBase.DEC -> NumberBase.DEC.symbol
                 NumberBase.HEX -> NumberBase.HEX.symbol
@@ -95,40 +111,24 @@ class Calculator {
             }
             display = String.format(format, value)
 
+        }else if(this.numBase != NumberBase.DEC){
+            errorOut()
         }
     }
 
-    fun bitWidthOutputSelector(){
-        display = when(this.bitWidth){
-            BitWidth.QWORD -> {
-                display.toDouble().toULong().toString()
-            }
-
-            BitWidth.DWORD -> {
-                display.toDouble().toUInt().toString()
-            }
-
-            BitWidth.WORD -> {
-                display.toDouble().toUInt().toUShort().toString()
-            }
-
-            BitWidth.BYTE -> {
-                display.toDouble().toUInt().toUByte().toString()
-            }
-        }
-    }
-
-    fun displayToDouble(): Double{
+    fun displayToNumber(): Double{
         return when(this.numBase){
             NumberBase.DEC -> display.toDoubleOrNull() ?: 0.0
-            NumberBase.HEX -> display.toInt(16).toDouble()
-            NumberBase.OCT -> display.toInt(8).toDouble()
+            NumberBase.HEX -> display.toLongOrNull(16)?.toDouble()?: 0.0
+            NumberBase.OCT -> display.toLongOrNull(8)?.toDouble()?: 0.0
         }
     }
 
     fun execute(incoming: Operation) {
 
-        val number = displayToDouble()
+        val number = if(incoming !in Operation.doesNotRequireInput) {
+            displayToNumber()
+        } else 0.0
 
         if (incoming in Operation.immediate) {
             when (incoming) {
@@ -224,13 +224,15 @@ class Calculator {
                 Operation.NAT_LOG -> {
                     display = fitDouble(log(number, EULER).toString())
                 }
-                Operation.NOT -> if(number % 1 == 0.0)fitDouble(number.toInt().inv().toString())else errorOut()
+                Operation.NOT -> {display = if(number % 1 == 0.0)fitDouble(number.toInt().inv().toString())else errorOut()}
 
                 else -> error("Unreachable branch triggered in execute")
             }
         } else {
             when (this.operation) {
-                Operation.ENTER -> accumulator = number
+                Operation.ENTER -> {
+                    accumulator = if(number.toLong() <= Int.MAX_VALUE) number else number.toInt().toDouble()
+                }
                 Operation.ADD -> accumulator += number
                 Operation.SUBTRACT -> accumulator -= number
                 Operation.MULTIPLY -> accumulator *= number
@@ -255,8 +257,7 @@ class Calculator {
             this.displayMode = true
             this.display = fitDouble(accumulator.toString())
         }
-        bitWidthOutputSelector()
-        numBaseOutputSelector()
+        outputFormater()
     }
 
     /**Returns a string that fits within the desired screen digits, or enters Error state*/
@@ -264,7 +265,7 @@ class Calculator {
         val num = numStr.toDoubleOrNull() ?: 0.0
         var str = numStr
         if (num % 1 == 0.0) {
-            if (num.absoluteValue > MAXINT) {
+            if (num.absoluteValue > MAXDISPLAYABLE) {
                 return errorOut()
             }
         } else {

@@ -18,8 +18,7 @@ enum class NumberBase(val symbol: String) {
 enum class BitWidth {
     BYTE,
     WORD,
-    DWORD,
-    QWORD
+    DWORD
 }
 
 enum class Operation(val symbol: String) {
@@ -67,15 +66,6 @@ enum class Operation(val symbol: String) {
     ;
 
     companion object {
-        fun fromSymbol(symbol: String): Operation {
-            for (op in Operation.entries) {
-                if (symbol == op.symbol) {
-                    return op
-                }
-            }
-            return ENTER
-        }
-
         val immediate = listOf(
             BACKSPACE,
             CHANGE_SIGN,
@@ -103,6 +93,17 @@ enum class Operation(val symbol: String) {
             RNG,
             NAT_LOG,
             NOT
+        )
+        val doesNotRequireInput = arrayOf(
+            BACKSPACE,
+            CLEAR,
+            CLEAR_CURRENT,
+            CHANGE_SIGN,
+            MEMORY_READ,
+            MEMORY_CLEAR,
+            PI,
+            EULER,
+            RNG
         )
     }
 }

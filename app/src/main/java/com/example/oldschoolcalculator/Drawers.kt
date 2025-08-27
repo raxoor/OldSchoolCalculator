@@ -263,7 +263,7 @@ fun BottomDrawer(
 
     var bitWidthState by remember { mutableIntStateOf(0) }
     var numBaseState by remember { mutableIntStateOf(0) }
-    val bitWidth = arrayOf(BitWidth.QWORD, BitWidth.DWORD, BitWidth.WORD, BitWidth.BYTE)
+    val bitWidth = arrayOf(BitWidth.DWORD, BitWidth.WORD, BitWidth.BYTE)
     val numBase = arrayOf(NumberBase.DEC, NumberBase.HEX, NumberBase.OCT)
     val hexButtonsEnabled = numBase[numBaseState] == NumberBase.HEX
 
