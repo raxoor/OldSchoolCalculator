@@ -220,7 +220,6 @@ fun <T>NumpadButton(
             contentAlignment = Alignment.Center,
             modifier = modifier
                 .fillMaxSize()
-                .background(brush = Brush.linearGradient(colors = buttonGradient)),
         ) {
             Text(
                 text = when(option){is Digit -> option.symbol.toString(); is Operation -> option.symbol; else -> error("Invalid type in NumpadButton")},
