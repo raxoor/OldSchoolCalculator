@@ -54,8 +54,8 @@ enum class Operation(val symbol: String) {
     LOG("log"),
     ANTI_LOG("anti log"),
     NAT_LOG("natural log"),
-    TO_DEG("to deg"),
-    FROM_DEG("from deg"),
+    TO_DMS("to deg"),
+    FROM_DMS("from deg"),
     RECIPROCAL("reciprocal"),
     FACTORIAL("x!"),
     PI("pi"),
@@ -92,7 +92,9 @@ enum class Operation(val symbol: String) {
             PERCENT,
             RNG,
             NAT_LOG,
-            NOT
+            NOT,
+            TO_DMS,
+            FROM_DMS
         )
         val doesNotRequireInput = arrayOf(
             BACKSPACE,

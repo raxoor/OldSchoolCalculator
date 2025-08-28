@@ -187,8 +187,8 @@ fun TopDrawer(
                     modifier = modifier,
                     calculator = calculator,
                     isActive = isShiftActive,
-                    primary = Operation.TO_DEG,
-                    secondary = Operation.FROM_DEG,
+                    primary = Operation.TO_DMS,
+                    secondary = Operation.FROM_DMS,
                     buttonText = { Superscript(text = "→°' \"") },
                     shiftDescriptor = { Superscript(text = "°' \"→", isOnButton = false) }
                 )

@@ -132,7 +132,7 @@ class Calculator {
 
         if (incoming in Operation.immediate) {
             when (incoming) {
-                Operation.BACKSPACE -> display = display.dropLast(1)
+                Operation.BACKSPACE -> display = if(display.length > 1)display.dropLast(1) else ZERO_STR
                 Operation.CLEAR -> {
                     clearAll(); return
                 }
@@ -224,6 +224,8 @@ class Calculator {
                 Operation.NAT_LOG -> {
                     display = fitDouble(log(number, EULER).toString())
                 }
+                Operation.FROM_DMS -> {display = fromDMS(display)}
+                Operation.TO_DMS -> display = toDMS(number)
                 Operation.NOT -> {display = if(number % 1 == 0.0)fitDouble(number.toInt().inv().toString())else errorOut()}
 
                 else -> error("Unreachable branch triggered in execute")
@@ -261,7 +263,7 @@ class Calculator {
     }
 
     /**Returns a string that fits within the desired screen digits, or enters Error state*/
-    private fun fitDouble(numStr: String): String {
+     fun fitDouble(numStr: String): String {
         val num = numStr.toDoubleOrNull() ?: 0.0
         var str = numStr
         if (num % 1 == 0.0) {
@@ -296,6 +298,31 @@ class Calculator {
             LogicalOperators.NOT -> 0.0
             LogicalOperators.NOR -> a.or(b).inv().toDouble()
             LogicalOperators.NAND -> a.and(b).inv().toDouble()
+        }
+    }
+
+    private fun toDMS(deg: Double):String{
+        val degrees = deg.toInt()
+        val minutes = (deg - degrees) * 60
+        val seconds = (minutes%1)*60
+        return ("$degrees'${minutes.toInt()}'${seconds.toInt()}")
+    }
+
+    private fun isDMSComplete(dms: String): Boolean{
+        var i = 0;
+        for(chr in dms){
+            if(chr == '\'') i++
+        }
+        return i > 1
+    }
+
+    private fun fromDMS(dms: String): String{
+        if(isDMSComplete(dms)){
+            val parts = dms.split( "'")
+            if(parts[1]=="") return errorOut()
+            return fitDouble((parts[0].toDouble() + parts[1].toDouble()/60 + if(parts[2] == "") 0.0 else parts[2].toDouble()/3600).toString())
+        }else{
+            return dms + "\'"
         }
     }
 
